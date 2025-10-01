@@ -1,5 +1,114 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>MM2 Market — Demo</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0f1114; --panel:#121418; --muted:#9aa6b6;
+    --accent:#7c5cff; --accent2:#8a34b3; --neon:#02d07b;
+    --card-bg:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.00));
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:Inter,system-ui,Arial;color:#e6eef8;background:linear-gradient(180deg,#0b0e11,#0a0d11 40%);}
+  .app{display:flex;height:100vh;overflow:hidden}
+  /* sidebar */
+  .sidebar{width:260px;background:#0b0d10;border-right:1px solid rgba(255,255,255,0.02);padding:28px 18px;display:flex;flex-direction:column;gap:18px}
+  .brand{display:flex;gap:12px;align-items:center}
+  .logo{width:44px;height:44px;border-radius:6px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-weight:800;color:#071028}
+  .brand .title{font-weight:700}
+  .nav{margin-top:12px;display:flex;flex-direction:column;gap:6px}
+  .nav button{background:transparent;color:#cbd6e6;padding:12px 14px;border-radius:8px;text-align:left;border:1px solid transparent;cursor:pointer;display:flex;gap:12px;align-items:center}
+  .nav button.active{background:transparent;border:1px solid rgba(124,92,255,0.16);box-shadow:0 8px 24px rgba(10,8,20,0.6);color:#fff}
+  .nav button svg{opacity:0.7}
+  /* main area */
+  .main{flex:1;padding:34px;overflow:auto}
+  .page-title{font-size:34px;margin:0 0 16px}
+  .content-card{background:var(--panel);border-radius:12px;padding:18px;border:1px solid rgba(255,255,255,0.02);box-shadow:0 4px 18px rgba(2,6,20,0.4)}
+  /* shop grid */
+  .controls{display:flex;gap:12px;align-items:center;margin-bottom:18px}
+  .search{flex:1;padding:12px;border-radius:8px;background:#0c0f12;border:1px solid rgba(255,255,255,0.02);color:#cfe4ff}
+  .filter, .walletbox{padding:10px 12px;border-radius:10px;background:#0c0f12;border:1px solid rgba(124,92,255,0.08);color:var(--muted)}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px;margin-top:18px}
+  .card{background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(0,0,0,0.02));border-radius:12px;padding:16px;border:1px solid rgba(255,255,255,0.02)}
+  .card img{width:100%;height:160px;object-fit:contain;border-radius:8px;margin-bottom:8px}
+  .title{font-weight:700}
+  .muted{color:var(--muted);font-size:13px}
+  .price{color:var(--neon);font-weight:800;margin-top:6px}
+  .card .actions{display:flex;gap:8px;margin-top:10px}
+  .btn{padding:10px 12px;border-radius:8px;border:0;background:linear-gradient(90deg,var(--accent),var(--accent2));color:#021;cursor:pointer}
+  .btn.secondary{background:transparent;border:1px solid rgba(255,255,255,0.04);color:var(--muted)}
+  /* wallet page */
+  .wallet-grid{display:grid;grid-template-columns:1fr;gap:16px}
+  .wallet-top{display:flex;justify-content:space-between;gap:12px;align-items:center}
+  .top-box{padding:20px;border-radius:12px;border:1px solid rgba(255,255,255,0.02);background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(0,0,0,0.02))}
+  .stat-big{font-size:28px;font-weight:800;color:#fff}
+  .topup-amount{width:220px;padding:12px;border-radius:8px;background:#0b0d11;border:1px solid rgba(255,255,255,0.02);color:#cfe4ff}
+  .preset-row{display:flex;gap:12px;margin-top:10px}
+  .preset{flex:1;padding:12px;border-radius:10px;background:#0b0d11;border:1px solid rgba(255,255,255,0.02);text-align:center;cursor:pointer}
+  .pay-options{display:flex;gap:12px;margin-top:14px}
+  .pay-btn{flex:1;padding:14px;border-radius:10px;background:#0c0f12;border:1px solid rgba(255,255,255,0.02);cursor:pointer;text-align:center}
+  .note{background:#2b2a24;padding:10px;border-radius:8px;color:#f9f0c9;margin-top:14px}
+  /* modal */
+  .modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);align-items:center;justify-content:center;z-index:1000}
+  .modal.open{display:flex}
+  .modal-card{background:#121418;padding:24px;border-radius:12px;width:320px;max-width:90%}
+  /* responsive */
+  @media(max-width:900px){
+    .sidebar{display:none}
+    .profile-row{grid-template-columns:1fr}
+    .grid{grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
+  }
+</style>
+
 <!-- PayPal SDK -->
-<script src="https://www.paypal.com/sdk/js?client-id=AZLjLoylhP8trchxDw9BolwD2rlIzZVbYyBCbAvgtZ8r2ndbmc49l4RXlBChcNJ9Prx2Jf5_RnsdnEz_&currency=USD"></script>
+<script src="https://www.paypal.com/sdk/js?client-id=AVZUBNBHWJsxbc5aUgXhtDruOu2M9KeakqwoRdrN0ZqeJOufKD29Nev23YXTcFdT8wcCBco87I9vmL52&currency=USD"></script>
+
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <div class="logo">MM2</div>
+      <div>
+        <div class="title">MM2 Market</div>
+        <div style="font-size:12px;color:var(--muted)">Trading Hub</div>
+      </div>
+    </div>
+    <nav class="nav" id="nav">
+      <button data-page="shop" class="active">🏠 Shop</button>
+      <button data-page="wallet">💳 Wallet</button>
+    </nav>
+  </aside>
+
+  <main class="main">
+    <!-- SHOP -->
+    <section id="page-shop" class="page">
+      <h1 class="page-title">MM2 Item Shop</h1>
+      <div class="content-card">
+        <div class="controls">
+          <div class="walletbox">Guthaben: <strong id="walletDisplay">$0.00</strong></div>
+          <button class="btn" onclick="showTopup()">Guthaben aufladen</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- WALLET -->
+    <section id="page-wallet" class="page" style="display:none">
+      <h1 class="page-title">Wallet</h1>
+      <div class="wallet-grid">
+        <div class="top-box">
+          <div>
+            <div class="muted-small">Aktuelles Guthaben</div>
+            <div class="stat-big" id="walletBig">$0.00</div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
 
 <!-- Modal Guthaben -->
 <div id="modalTopup" class="modal">
@@ -14,85 +123,53 @@
 </div>
 
 <script>
+let wallet = 0;
+
+function $(id){ return document.getElementById(id); }
+
+function updateWallet(){
+  $('walletDisplay').textContent = "$" + wallet.toFixed(2);
+  $('walletBig').textContent = "$" + wallet.toFixed(2);
+}
+
 function showTopup(){
-  document.getElementById('modalTopup').classList.add('open');
+  $('modalTopup').classList.add('open');
   renderPayPalButton(10);
 }
-
 function closeTopup(){
-  document.getElementById('modalTopup').classList.remove('open');
+  $('modalTopup').classList.remove('open');
 }
-
 function renderPayPalButton(amount){
   document.getElementById('paypal-button-container').innerHTML = "";
   paypal.Buttons({
-    style: { color: 'blue', shape: 'rect', label: 'paypal' },
+    style:{color:'blue',shape:'rect',label:'paypal'},
     createOrder: (data, actions) => {
       return actions.order.create({
-        purchase_units: [{ amount: { value: amount.toString() } }]
+        purchase_units:[{ amount:{ value: amount.toString() } }]
       });
     },
     onApprove: (data, actions) => {
       return actions.order.capture().then(details => {
+        alert("Zahlung erfolgreich von " + details.payer.name.given_name);
         wallet += amount;
-        saveAll();
-        document.getElementById('wallet').textContent = wallet.toFixed(2);
+        updateWallet();
         closeTopup();
       });
-    },
-    onError: (err) => {
-      console.log("PayPal Fehler:", err);
-      // Fehler werden nur still im Log angezeigt, keine Popups
     }
   }).render('#paypal-button-container');
 }
+
+// nav switching
+document.querySelectorAll('#nav button').forEach(b=>{
+  b.addEventListener('click',()=>{
+    document.querySelectorAll('.page').forEach(p=>p.style.display='none');
+    document.getElementById('page-'+b.dataset.page).style.display='block';
+    document.querySelectorAll('#nav button').forEach(x=>x.classList.remove('active'));
+    b.classList.add('active');
+  });
+});
+
+updateWallet();
 </script>
-<!-- PayPal SDK -->
-<script src="https://www.paypal.com/sdk/js?client-id=AZLjLoylhP8trchxDw9BolwD2rlIzZVbYyBCbAvgtZ8r2ndbmc49l4RXlBChcNJ9Prx2Jf5_RnsdnEz_&currency=USD"></script>
-
-<!-- Modal Guthaben -->
-<div id="modalTopup" class="modal">
-  <div class="modal-card">
-    <h3>Guthaben aufladen</h3>
-    <p class="small">Bezahlen mit PayPal:</p>
-    <div id="paypal-button-container"></div>
-    <div style="margin-top:8px;text-align:right">
-      <button class="secondary" onclick="closeTopup()">Schließen</button>
-    </div>
-  </div>
-</div>
-
-<script>
-function showTopup(){
-  document.getElementById('modalTopup').classList.add('open');
-  renderPayPalButton(10);
-}
-
-function closeTopup(){
-  document.getElementById('modalTopup').classList.remove('open');
-}
-
-function renderPayPalButton(amount){
-  document.getElementById('paypal-button-container').innerHTML = "";
-  paypal.Buttons({
-    style: { color: 'blue', shape: 'rect', label: 'paypal' },
-    createOrder: (data, actions) => {
-      return actions.order.create({
-        purchase_units: [{ amount: { value: amount.toString() } }]
-      });
-    },
-    onApprove: (data, actions) => {
-      return actions.order.capture().then(details => {
-        wallet += amount;
-        saveAll();
-        document.getElementById('wallet').textContent = wallet.toFixed(2);
-        closeTopup();
-      });
-    },
-    onError: (err) => {
-      console.log("PayPal Fehler:", err);
-      // Fehler werden nur still im Log angezeigt, keine Popups
-    }
-  }).render('#paypal-button-container');
-}
-</script>
+</body>
+</html>
