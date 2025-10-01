@@ -580,8 +580,30 @@ window.DEBUG = {items,cart,wallet,inventory,queue,ownerProfit};
 <footer>
   Demo Marketplace — keine echte Zahlungsintegration. Für echte Roblox-Bots / PayPal Integration brauchst du einen Backend-Server (siehe Anleitung unten).
 </footer>
-  <!-- PayPal SDK einbinden -->
+  ...
+  <div id="paypal-button-container"></div>
+
+<!-- PayPal SDK einbinden -->
 <script src="https://www.paypal.com/sdk/js?client-id=AVZUBNBHWJsxbc5aUgXhtDruOu2M9KeakqwoRdrN0ZqeJOufKD29Nev23YXTcFdT8wcCBco87I9vmL52&currency=USD"></script>
+
+<script>
+  paypal.Buttons({
+    createOrder: function(data, actions) {
+      return actions.order.create({
+        purchase_units: [{
+          amount: {
+            value: '10.00' // <<< Hier deinen Preis einsetzen
+          }
+        }]
+      });
+    },
+    onApprove: function(data, actions) {
+      return actions.order.capture().then(function(details) {
+        alert('Zahlung abgeschlossen von ' + details.payer.name.given_name);
+      });
+    }
+  }).render('#paypal-button-container');
+</script>
 
 </body>
 </html>
