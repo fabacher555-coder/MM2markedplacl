@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>MM2 Market</title>
+<title>MM2 Market — Demo (Sandbox PayPal)</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
 <style>
   :root{
@@ -13,46 +13,51 @@
   *{box-sizing:border-box}
   body{margin:0;font-family:Inter,system-ui,Arial;color:#e6eef8;background:linear-gradient(180deg,#0b0e11,#0a0d11 40%);}
   .app{display:flex;height:100vh;overflow:hidden}
-  /* sidebar */
   .sidebar{width:260px;background:#0b0d10;border-right:1px solid rgba(255,255,255,0.02);padding:28px 18px;display:flex;flex-direction:column;gap:18px}
   .brand{display:flex;gap:12px;align-items:center}
   .logo{width:44px;height:44px;border-radius:6px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-weight:800;color:#071028}
-  .brand .title{font-weight:700}
   .nav{margin-top:12px;display:flex;flex-direction:column;gap:6px}
   .nav button{background:transparent;color:#cbd6e6;padding:12px 14px;border-radius:8px;text-align:left;border:1px solid transparent;cursor:pointer;display:flex;gap:12px;align-items:center}
   .nav button.active{background:transparent;border:1px solid rgba(124,92,255,0.16);box-shadow:0 8px 24px rgba(10,8,20,0.6);color:#fff}
-  /* main */
   .main{flex:1;padding:34px;overflow:auto}
   .page-title{font-size:34px;margin:0 0 16px}
   .content-card{background:var(--panel);border-radius:12px;padding:18px;border:1px solid rgba(255,255,255,0.02);box-shadow:0 4px 18px rgba(2,6,20,0.4)}
   .controls{display:flex;gap:12px;align-items:center;margin-bottom:18px}
-  .search{flex:1;padding:12px;border-radius:8px;background:#0c0f12;border:1px solid rgba(255,255,255,0.02);color:#cfe4ff}
-  .filter, .walletbox{padding:10px 12px;border-radius:10px;background:#0c0f12;border:1px solid rgba(124,92,255,0.08);color:var(--muted)}
-  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px;margin-top:18px}
-  .card{background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(0,0,0,0.02));border-radius:12px;padding:16px;border:1px solid rgba(255,255,255,0.02)}
-  .card img{width:100%;height:160px;object-fit:contain;border-radius:8px;margin-bottom:8px}
-  .title{font-weight:700}
-  .muted{color:var(--muted);font-size:13px}
-  .price{color:var(--neon);font-weight:800;margin-top:6px}
-  .card .actions{display:flex;gap:8px;margin-top:10px}
+  .walletbox{padding:10px 12px;border-radius:10px;background:#0c0f12;border:1px solid rgba(124,92,255,0.08);color:var(--muted)}
   .btn{padding:10px 12px;border-radius:8px;border:0;background:linear-gradient(90deg,var(--accent),var(--accent2));color:#021;cursor:pointer}
-  .btn.secondary{background:transparent;border:1px solid rgba(255,255,255,0.04);color:var(--muted)}
+  .secondary{background:transparent;border:1px solid rgba(255,255,255,0.04);color:var(--muted)}
+  .modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);align-items:center;justify-content:center;z-index:1000}
+  .modal.open{display:flex}
+  .modal-card{background:#121418;padding:24px;border-radius:12px;width:360px;max-width:92%}
+  .small{font-size:13px;color:var(--muted)}
+  @media(max-width:900px){ .sidebar{display:none} }
 </style>
-<script src="https://www.paypal.com/sdk/js?client-id=AZLjLoylhP8trchxDw9BolwD2rlIzZVbYyBCbAvgtZ8r2ndbmc49l4RXlBChcNJ9Prx2Jf5_RnsdnEz_&currency=USD"></script>
+
+<!-- PAYPAL SDK (Sandbox by default: client-id=sb). 
+     >>> REPLACE 'sb' with YOUR LIVE client-id when you are ready for production.
+     But before going live, implement server-side order creation & capture. -->
+<script src="https://www.paypal.com/sdk/js?client-id=sb&currency=USD"></script>
+
 </head>
 <body>
 <div class="app">
   <aside class="sidebar" id="sidebar">
     <div class="brand">
       <div class="logo">MM2</div>
-      <div><div class="title">MM2 Market</div><div style="font-size:12px;color:var(--muted)">Trading Hub</div></div>
+      <div>
+        <div style="font-weight:700">MM2 Market</div>
+        <div style="font-size:12px;color:var(--muted)">Trading Hub (Demo)</div>
+      </div>
     </div>
+
     <nav class="nav" id="nav">
       <button data-page="shop" class="active">🏠 Shop</button>
       <button data-page="cart">🧺 Warenkorb</button>
-      <button data-page="inventory">📦 Inventar</button>
+      <button data-page="add">➕ Items hinzufügen</button>
+      <button data-page="inventory">📦 Mein Inventar</button>
       <button data-page="wallet">💳 Wallet</button>
       <button data-page="history">🕘 Verlauf</button>
+      <button data-page="profile">👤 Profil</button>
     </nav>
   </aside>
 
@@ -62,106 +67,147 @@
       <h1 class="page-title">MM2 Item Shop</h1>
       <div class="content-card">
         <div class="controls">
-          <input id="searchInput" class="search" placeholder="Item suchen..." />
           <div class="walletbox">Guthaben: <strong id="walletDisplay">$0.00</strong></div>
+          <button class="btn" onclick="showTopup()">Guthaben aufladen</button>
         </div>
         <div id="shopGrid" class="grid"></div>
       </div>
     </section>
 
-    <!-- CART -->
+    <!-- CART (placeholder) -->
     <section id="page-cart" class="page" style="display:none">
       <h1 class="page-title">Warenkorb</h1>
-      <div class="content-card" id="cartContent">Dein Warenkorb ist leer</div>
+      <div class="content-card">Dein Warenkorb ist leer (Demo)</div>
+    </section>
+
+    <!-- ADD -->
+    <section id="page-add" class="page" style="display:none">
+      <h1 class="page-title">Items hinzufügen</h1>
+      <div class="content-card">Trade Bot Details (Demo)</div>
     </section>
 
     <!-- INVENTORY -->
     <section id="page-inventory" class="page" style="display:none">
-      <h1 class="page-title">Inventar</h1>
-      <div class="content-card" id="invContent">Noch keine Items</div>
+      <h1 class="page-title">Mein Inventar</h1>
+      <div class="content-card">Noch keine Items</div>
     </section>
 
     <!-- WALLET -->
     <section id="page-wallet" class="page" style="display:none">
       <h1 class="page-title">Wallet</h1>
       <div class="content-card">
-        <input id="amountInput" type="number" min="1" step="1" placeholder="Betrag ($)" class="search" />
-        <div style="margin-top:12px" id="paypal-button-container"></div>
+        <div class="small">Aktuelles Guthaben</div>
+        <div style="font-weight:800;font-size:28px" id="walletBig">$0.00</div>
       </div>
     </section>
 
     <!-- HISTORY -->
     <section id="page-history" class="page" style="display:none">
       <h1 class="page-title">Verlauf</h1>
-      <div class="content-card" id="historyContent">Noch keine Transaktionen</div>
+      <div class="content-card" id="historyCard">Noch keine Transaktionen</div>
     </section>
+
+    <!-- PROFILE -->
+    <section id="page-profile" class="page" style="display:none">
+      <h1 class="page-title">Profil</h1>
+      <div class="content-card">Benutzerprofil (Demo)</div>
+    </section>
+
   </main>
 </div>
 
+<!-- Modal Guthaben (eingebaut wie gewünscht) -->
+<div id="modalTopup" class="modal">
+  <div class="modal-card">
+    <h3>Guthaben aufladen</h3>
+    <p class="small">Bezahlen mit PayPal (Sandbox)</p>
+    <div id="paypal-button-container" style="margin-top:8px"></div>
+    <div style="margin-top:12px;text-align:right">
+      <button class="secondary" onclick="closeTopup()">Schließen</button>
+    </div>
+  </div>
+</div>
+
 <script>
-const STORAGE = { ITEMS:'mm2_items', CART:'mm2_cart', WALLET:'mm2_wallet', INV:'mm2_inv', TX:'mm2_tx' };
-function $(s){return document.querySelector(s)} function $all(s){return [...document.querySelectorAll(s)]}
+/* -------------------------
+   Demo marketplace frontend
+   - PayPal Buttons run in Sandbox by default (client-id=sb)
+   - Swap client-id to your LIVE ID when ready (see comment in <head>)
+   - For production: implement server-side order creation + capture + webhooks
+--------------------------*/
 
-/* echte MM2 Items */
-const initialItems = [
-  {id:'sunset',name:'Sunset Knife',price:150,image:'https://static.wikia.nocookie.net/murder-mystery-2/images/e/e3/SunsetKnife.webp'},
-  {id:'luger',name:'Luger',price:75,image:'https://static.wikia.nocookie.net/murder-mystery-2/images/7/70/LugerGun.webp'},
-  {id:'chroma',name:'Chroma Seer',price:300,image:'https://static.wikia.nocookie.net/murder-mystery-2/images/1/19/Chroma_Seer.webp'},
-  {id:'shard',name:'Eternal Shard',price:220,image:'https://static.wikia.nocookie.net/murder-mystery-2/images/5/5b/Eternal_IV.webp'}
-];
+let wallet = parseFloat(localStorage.getItem('mm2_demo_wallet') || 0);
+const txs = JSON.parse(localStorage.getItem('mm2_demo_txs') || '[]');
 
-let items=JSON.parse(localStorage.getItem(STORAGE.ITEMS))||initialItems.slice();
-let cart=JSON.parse(localStorage.getItem(STORAGE.CART))||[];
-let wallet=parseFloat(localStorage.getItem(STORAGE.WALLET)||0);
-let inv=JSON.parse(localStorage.getItem(STORAGE.INV))||[];
-let txs=JSON.parse(localStorage.getItem(STORAGE.TX))||[];
-
-function saveAll(){localStorage.setItem(STORAGE.ITEMS,JSON.stringify(items));localStorage.setItem(STORAGE.CART,JSON.stringify(cart));localStorage.setItem(STORAGE.WALLET,wallet.toFixed(2));localStorage.setItem(STORAGE.INV,JSON.stringify(inv));localStorage.setItem(STORAGE.TX,JSON.stringify(txs));}
-
-function renderShop(){
-  const grid=$('#shopGrid');grid.innerHTML='';
-  items.forEach(it=>{
-    const div=document.createElement('div');div.className='card';
-    div.innerHTML=`<img src="${it.image}" /><div class="title">${it.name}</div><div class="price">$${it.price}</div>
-    <div class="actions"><button class="btn" onclick='addToCart("${it.id}")'>Sofort kaufen</button><button class="btn secondary" onclick='addToCart("${it.id}")'>🛒</button></div>`;
-    grid.appendChild(div);
-  });
-  updateWalletDisplays();renderCart();renderInv();renderHistory();
+function $(id){return document.getElementById(id)}
+function updateWalletDisplays(){
+  $('walletDisplay').textContent = '$' + wallet.toFixed(2);
+  if($('walletBig')) $('walletBig').textContent = '$' + wallet.toFixed(2);
 }
-function renderCart(){
-  const el=$('#cartContent');
-  if(cart.length===0){el.innerHTML='Dein Warenkorb ist leer';return;}
-  let sum=0;let html='<ul>';
-  cart.forEach((c,i)=>{sum+=Number(c.price);html+=`<li>${c.name} — $${c.price} <button onclick="removeFromCart(${i})">x</button></li>`});
-  html+=`</ul><strong>Summe: $${sum}</strong><br><button class="btn" onclick="checkout()">Mit Wallet zahlen</button>`;
-  el.innerHTML=html;
+updateWalletDisplays();
+
+function showTopup(){
+  $('modalTopup').classList.add('open');
+  // render button with default amount $10 (you can extend to dynamic amounts)
+  renderPayPalButton(10);
 }
-function renderInv(){const el=$('#invContent');if(inv.length===0){el.innerHTML='Noch keine Items';return;}el.innerHTML=inv.map(i=>`<div class="card"><img src="${i.image}"/><div>${i.name}</div></div>`).join('');}
-function renderHistory(){const el=$('#historyContent');if(txs.length===0){el.innerHTML='Noch keine Transaktionen';return;}el.innerHTML=txs.map(t=>`<div>${t.type} - $${t.amount} <span style="float:right">${new Date(t.time).toLocaleString()}</span></div>`).join('');}
-function updateWalletDisplays(){$('#walletDisplay').textContent=`$${wallet.toFixed(2)}`;}
+function closeTopup(){ $('modalTopup').classList.remove('open'); }
 
-function addToCart(id){const it=items.find(x=>x.id===id);if(!it)return;cart.push(it);saveAll();renderCart();}
-function removeFromCart(i){cart.splice(i,1);saveAll();renderCart();}
-function checkout(){if(cart.length===0)return;const total=cart.reduce((s,i)=>s+Number(i.price),0);if(wallet<total)return alert('Nicht genug Guthaben');wallet-=total;cart.forEach(it=>inv.push(it));txs.push({type:'Kauf',amount:total.toFixed(2),time:Date.now()});cart=[];saveAll();renderShop();alert('Kauf erfolgreich');}
+/* Renders client-side PayPal Buttons (Sandbox/demo).
+   IMPORTANT: This client-side order creation is OK for testing.
+   For real money, create the order on your server and capture server-side. */
+function renderPayPalButton(amount){
+  const container = $('paypal-button-container');
+  if(!container) return;
+  container.innerHTML = ''; // reset if already rendered
 
-/* PayPal Buttons */
-function renderPayPalButtons(){
-  if(!window.paypal)return;
+  if(!window.paypal){
+    container.innerHTML = '<div class="small">PayPal SDK nicht verfügbar.</div>';
+    return;
+  }
+
   paypal.Buttons({
-    style:{color:'blue',shape:'rect',label:'paypal'},
-    createOrder:(data,actions)=>{const amt=parseFloat($('#amountInput').value||0);if(!amt)return Promise.reject();return actions.order.create({purchase_units:[{amount:{value:amt.toString()}}]});},
-    onApprove:(data,actions)=>actions.order.capture().then(details=>{
-      const amt=parseFloat($('#amountInput').value||0);
-      wallet+=amt;txs.push({type:'Topup',amount:amt.toFixed(2),time:Date.now(),note:'PayPal'});saveAll();updateWalletDisplays();renderHistory();alert('PayPal Zahlung erfolgreich: $'+amt);
-    })
+    style: { color: 'blue', shape: 'rect', label: 'paypal' },
+    createOrder: function(data, actions){
+      // client-side create (demo). In production, call your server to create the order.
+      return actions.order.create({
+        purchase_units: [{ amount: { value: amount.toString() } }]
+      });
+    },
+    onApprove: function(data, actions){
+      return actions.order.capture().then(function(details){
+        // credit demo wallet with the amount
+        wallet = Number((wallet + amount).toFixed(2));
+        localStorage.setItem('mm2_demo_wallet', wallet.toFixed(2));
+        const tx = { type:'Topup (PayPal Sandbox)', amount: amount.toFixed(2), payer: details.payer.name?.given_name || '', time: Date.now() };
+        txs.push(tx);
+        localStorage.setItem('mm2_demo_txs', JSON.stringify(txs));
+        updateWalletDisplays();
+        closeTopup();
+        alert('Zahlung erfolgreich (Sandbox). Betrag: $' + amount.toFixed(2));
+      });
+    },
+    onError: function(err){
+      console.error('PayPal error', err);
+      alert('PayPal Fehler: ' + (err && err.message ? err.message : err));
+    }
   }).render('#paypal-button-container');
 }
 
-/* navigation */
-function switchPage(name){$all('.page').forEach(p=>p.style.display='none');$('#page-'+name).style.display='block';$all('#nav button').forEach(b=>b.classList.remove('active'));document.querySelector(`#nav button[data-page="${name}"]`).classList.add('active');if(name==='wallet')renderPayPalButtons();}
-$all('#nav button').forEach(b=>b.addEventListener('click',()=>switchPage(b.getAttribute('data-page'))));
+/* NAV */
+document.querySelectorAll('#nav button').forEach(b=>{
+  b.addEventListener('click', ()=>{
+    document.querySelectorAll('.page').forEach(p=>p.style.display='none');
+    const id = 'page-' + b.dataset.page;
+    const el = document.getElementById(id);
+    if(el) el.style.display = 'block';
+    document.querySelectorAll('#nav button').forEach(x=>x.classList.remove('active'));
+    b.classList.add('active');
+  });
+});
 
-renderShop();updateWalletDisplays();renderHistory();
+/* Initial: show shop page */
+document.querySelector('#nav button[data-page="shop"]').click();
 </script>
 </body>
 </html>
