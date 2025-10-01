@@ -3,13 +3,12 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>MM2 Market — Demo</title>
+<title>MM2 Market</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
 <style>
   :root{
     --bg:#0f1114; --panel:#121418; --muted:#9aa6b6;
     --accent:#7c5cff; --accent2:#8a34b3; --neon:#02d07b;
-    --card-bg:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.00));
   }
   *{box-sizing:border-box}
   body{margin:0;font-family:Inter,system-ui,Arial;color:#e6eef8;background:linear-gradient(180deg,#0b0e11,#0a0d11 40%);}
@@ -22,12 +21,10 @@
   .nav{margin-top:12px;display:flex;flex-direction:column;gap:6px}
   .nav button{background:transparent;color:#cbd6e6;padding:12px 14px;border-radius:8px;text-align:left;border:1px solid transparent;cursor:pointer;display:flex;gap:12px;align-items:center}
   .nav button.active{background:transparent;border:1px solid rgba(124,92,255,0.16);box-shadow:0 8px 24px rgba(10,8,20,0.6);color:#fff}
-  .nav button svg{opacity:0.7}
-  /* main area */
+  /* main */
   .main{flex:1;padding:34px;overflow:auto}
   .page-title{font-size:34px;margin:0 0 16px}
   .content-card{background:var(--panel);border-radius:12px;padding:18px;border:1px solid rgba(255,255,255,0.02);box-shadow:0 4px 18px rgba(2,6,20,0.4)}
-  /* shop grid */
   .controls{display:flex;gap:12px;align-items:center;margin-bottom:18px}
   .search{flex:1;padding:12px;border-radius:8px;background:#0c0f12;border:1px solid rgba(255,255,255,0.02);color:#cfe4ff}
   .filter, .walletbox{padding:10px 12px;border-radius:10px;background:#0c0f12;border:1px solid rgba(124,92,255,0.08);color:var(--muted)}
@@ -40,46 +37,22 @@
   .card .actions{display:flex;gap:8px;margin-top:10px}
   .btn{padding:10px 12px;border-radius:8px;border:0;background:linear-gradient(90deg,var(--accent),var(--accent2));color:#021;cursor:pointer}
   .btn.secondary{background:transparent;border:1px solid rgba(255,255,255,0.04);color:var(--muted)}
-  /* wallet page */
-  .wallet-grid{display:grid;grid-template-columns:1fr;gap:16px}
-  .wallet-top{display:flex;justify-content:space-between;gap:12px;align-items:center}
-  .top-box{padding:20px;border-radius:12px;border:1px solid rgba(255,255,255,0.02);background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(0,0,0,0.02))}
-  .stat-big{font-size:28px;font-weight:800;color:#fff}
-  .topup-amount{width:220px;padding:12px;border-radius:8px;background:#0b0d11;border:1px solid rgba(255,255,255,0.02);color:#cfe4ff}
-  .preset-row{display:flex;gap:12px;margin-top:10px}
-  .preset{flex:1;padding:12px;border-radius:10px;background:#0b0d11;border:1px solid rgba(255,255,255,0.02);text-align:center;cursor:pointer}
-  .pay-options{display:flex;gap:12px;margin-top:14px}
-  .pay-btn{flex:1;padding:14px;border-radius:10px;background:#0c0f12;border:1px solid rgba(255,255,255,0.02);cursor:pointer;text-align:center}
-  .note{background:#2b2a24;padding:10px;border-radius:8px;color:#f9f0c9;margin-top:14px}
-  /* modal */
-  .modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);align-items:center;justify-content:center;z-index:1000}
-  .modal.open{display:flex}
-  .modal-card{background:#121418;padding:24px;border-radius:12px;width:320px;max-width:90%}
-  /* responsive */
-  @media(max-width:900px){
-    .sidebar{display:none}
-    .profile-row{grid-template-columns:1fr}
-    .grid{grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
-  }
 </style>
-
-<!-- PayPal SDK -->
-<script src="https://www.paypal.com/sdk/js?client-id=AVZUBNBHWJsxbc5aUgXhtDruOu2M9KeakqwoRdrN0ZqeJOufKD29Nev23YXTcFdT8wcCBco87I9vmL52&currency=USD"></script>
-
+<script src="https://www.paypal.com/sdk/js?client-id=AZLjLoylhP8trchxDw9BolwD2rlIzZVbYyBCbAvgtZ8r2ndbmc49l4RXlBChcNJ9Prx2Jf5_RnsdnEz_&currency=USD"></script>
 </head>
 <body>
 <div class="app">
   <aside class="sidebar" id="sidebar">
     <div class="brand">
       <div class="logo">MM2</div>
-      <div>
-        <div class="title">MM2 Market</div>
-        <div style="font-size:12px;color:var(--muted)">Trading Hub</div>
-      </div>
+      <div><div class="title">MM2 Market</div><div style="font-size:12px;color:var(--muted)">Trading Hub</div></div>
     </div>
     <nav class="nav" id="nav">
       <button data-page="shop" class="active">🏠 Shop</button>
+      <button data-page="cart">🧺 Warenkorb</button>
+      <button data-page="inventory">📦 Inventar</button>
       <button data-page="wallet">💳 Wallet</button>
+      <button data-page="history">🕘 Verlauf</button>
     </nav>
   </aside>
 
@@ -89,87 +62,106 @@
       <h1 class="page-title">MM2 Item Shop</h1>
       <div class="content-card">
         <div class="controls">
+          <input id="searchInput" class="search" placeholder="Item suchen..." />
           <div class="walletbox">Guthaben: <strong id="walletDisplay">$0.00</strong></div>
-          <button class="btn" onclick="showTopup()">Guthaben aufladen</button>
         </div>
+        <div id="shopGrid" class="grid"></div>
       </div>
+    </section>
+
+    <!-- CART -->
+    <section id="page-cart" class="page" style="display:none">
+      <h1 class="page-title">Warenkorb</h1>
+      <div class="content-card" id="cartContent">Dein Warenkorb ist leer</div>
+    </section>
+
+    <!-- INVENTORY -->
+    <section id="page-inventory" class="page" style="display:none">
+      <h1 class="page-title">Inventar</h1>
+      <div class="content-card" id="invContent">Noch keine Items</div>
     </section>
 
     <!-- WALLET -->
     <section id="page-wallet" class="page" style="display:none">
       <h1 class="page-title">Wallet</h1>
-      <div class="wallet-grid">
-        <div class="top-box">
-          <div>
-            <div class="muted-small">Aktuelles Guthaben</div>
-            <div class="stat-big" id="walletBig">$0.00</div>
-          </div>
-        </div>
+      <div class="content-card">
+        <input id="amountInput" type="number" min="1" step="1" placeholder="Betrag ($)" class="search" />
+        <div style="margin-top:12px" id="paypal-button-container"></div>
       </div>
+    </section>
+
+    <!-- HISTORY -->
+    <section id="page-history" class="page" style="display:none">
+      <h1 class="page-title">Verlauf</h1>
+      <div class="content-card" id="historyContent">Noch keine Transaktionen</div>
     </section>
   </main>
 </div>
 
-<!-- Modal Guthaben -->
-<div id="modalTopup" class="modal">
-  <div class="modal-card">
-    <h3>Guthaben aufladen</h3>
-    <p class="small">Bezahlen mit PayPal:</p>
-    <div id="paypal-button-container"></div>
-    <div style="margin-top:8px;text-align:right">
-      <button class="secondary" onclick="closeTopup()">Schließen</button>
-    </div>
-  </div>
-</div>
-
 <script>
-let wallet = 0;
+const STORAGE = { ITEMS:'mm2_items', CART:'mm2_cart', WALLET:'mm2_wallet', INV:'mm2_inv', TX:'mm2_tx' };
+function $(s){return document.querySelector(s)} function $all(s){return [...document.querySelectorAll(s)]}
 
-function $(id){ return document.getElementById(id); }
+/* echte MM2 Items */
+const initialItems = [
+  {id:'sunset',name:'Sunset Knife',price:150,image:'https://static.wikia.nocookie.net/murder-mystery-2/images/e/e3/SunsetKnife.webp'},
+  {id:'luger',name:'Luger',price:75,image:'https://static.wikia.nocookie.net/murder-mystery-2/images/7/70/LugerGun.webp'},
+  {id:'chroma',name:'Chroma Seer',price:300,image:'https://static.wikia.nocookie.net/murder-mystery-2/images/1/19/Chroma_Seer.webp'},
+  {id:'shard',name:'Eternal Shard',price:220,image:'https://static.wikia.nocookie.net/murder-mystery-2/images/5/5b/Eternal_IV.webp'}
+];
 
-function updateWallet(){
-  $('walletDisplay').textContent = "$" + wallet.toFixed(2);
-  $('walletBig').textContent = "$" + wallet.toFixed(2);
-}
+let items=JSON.parse(localStorage.getItem(STORAGE.ITEMS))||initialItems.slice();
+let cart=JSON.parse(localStorage.getItem(STORAGE.CART))||[];
+let wallet=parseFloat(localStorage.getItem(STORAGE.WALLET)||0);
+let inv=JSON.parse(localStorage.getItem(STORAGE.INV))||[];
+let txs=JSON.parse(localStorage.getItem(STORAGE.TX))||[];
 
-function showTopup(){
-  $('modalTopup').classList.add('open');
-  renderPayPalButton(10);
+function saveAll(){localStorage.setItem(STORAGE.ITEMS,JSON.stringify(items));localStorage.setItem(STORAGE.CART,JSON.stringify(cart));localStorage.setItem(STORAGE.WALLET,wallet.toFixed(2));localStorage.setItem(STORAGE.INV,JSON.stringify(inv));localStorage.setItem(STORAGE.TX,JSON.stringify(txs));}
+
+function renderShop(){
+  const grid=$('#shopGrid');grid.innerHTML='';
+  items.forEach(it=>{
+    const div=document.createElement('div');div.className='card';
+    div.innerHTML=`<img src="${it.image}" /><div class="title">${it.name}</div><div class="price">$${it.price}</div>
+    <div class="actions"><button class="btn" onclick='addToCart("${it.id}")'>Sofort kaufen</button><button class="btn secondary" onclick='addToCart("${it.id}")'>🛒</button></div>`;
+    grid.appendChild(div);
+  });
+  updateWalletDisplays();renderCart();renderInv();renderHistory();
 }
-function closeTopup(){
-  $('modalTopup').classList.remove('open');
+function renderCart(){
+  const el=$('#cartContent');
+  if(cart.length===0){el.innerHTML='Dein Warenkorb ist leer';return;}
+  let sum=0;let html='<ul>';
+  cart.forEach((c,i)=>{sum+=Number(c.price);html+=`<li>${c.name} — $${c.price} <button onclick="removeFromCart(${i})">x</button></li>`});
+  html+=`</ul><strong>Summe: $${sum}</strong><br><button class="btn" onclick="checkout()">Mit Wallet zahlen</button>`;
+  el.innerHTML=html;
 }
-function renderPayPalButton(amount){
-  document.getElementById('paypal-button-container').innerHTML = "";
+function renderInv(){const el=$('#invContent');if(inv.length===0){el.innerHTML='Noch keine Items';return;}el.innerHTML=inv.map(i=>`<div class="card"><img src="${i.image}"/><div>${i.name}</div></div>`).join('');}
+function renderHistory(){const el=$('#historyContent');if(txs.length===0){el.innerHTML='Noch keine Transaktionen';return;}el.innerHTML=txs.map(t=>`<div>${t.type} - $${t.amount} <span style="float:right">${new Date(t.time).toLocaleString()}</span></div>`).join('');}
+function updateWalletDisplays(){$('#walletDisplay').textContent=`$${wallet.toFixed(2)}`;}
+
+function addToCart(id){const it=items.find(x=>x.id===id);if(!it)return;cart.push(it);saveAll();renderCart();}
+function removeFromCart(i){cart.splice(i,1);saveAll();renderCart();}
+function checkout(){if(cart.length===0)return;const total=cart.reduce((s,i)=>s+Number(i.price),0);if(wallet<total)return alert('Nicht genug Guthaben');wallet-=total;cart.forEach(it=>inv.push(it));txs.push({type:'Kauf',amount:total.toFixed(2),time:Date.now()});cart=[];saveAll();renderShop();alert('Kauf erfolgreich');}
+
+/* PayPal Buttons */
+function renderPayPalButtons(){
+  if(!window.paypal)return;
   paypal.Buttons({
     style:{color:'blue',shape:'rect',label:'paypal'},
-    createOrder: (data, actions) => {
-      return actions.order.create({
-        purchase_units:[{ amount:{ value: amount.toString() } }]
-      });
-    },
-    onApprove: (data, actions) => {
-      return actions.order.capture().then(details => {
-        alert("Zahlung erfolgreich von " + details.payer.name.given_name);
-        wallet += amount;
-        updateWallet();
-        closeTopup();
-      });
-    }
+    createOrder:(data,actions)=>{const amt=parseFloat($('#amountInput').value||0);if(!amt)return Promise.reject();return actions.order.create({purchase_units:[{amount:{value:amt.toString()}}]});},
+    onApprove:(data,actions)=>actions.order.capture().then(details=>{
+      const amt=parseFloat($('#amountInput').value||0);
+      wallet+=amt;txs.push({type:'Topup',amount:amt.toFixed(2),time:Date.now(),note:'PayPal'});saveAll();updateWalletDisplays();renderHistory();alert('PayPal Zahlung erfolgreich: $'+amt);
+    })
   }).render('#paypal-button-container');
 }
 
-// nav switching
-document.querySelectorAll('#nav button').forEach(b=>{
-  b.addEventListener('click',()=>{
-    document.querySelectorAll('.page').forEach(p=>p.style.display='none');
-    document.getElementById('page-'+b.dataset.page).style.display='block';
-    document.querySelectorAll('#nav button').forEach(x=>x.classList.remove('active'));
-    b.classList.add('active');
-  });
-});
+/* navigation */
+function switchPage(name){$all('.page').forEach(p=>p.style.display='none');$('#page-'+name).style.display='block';$all('#nav button').forEach(b=>b.classList.remove('active'));document.querySelector(`#nav button[data-page="${name}"]`).classList.add('active');if(name==='wallet')renderPayPalButtons();}
+$all('#nav button').forEach(b=>b.addEventListener('click',()=>switchPage(b.getAttribute('data-page'))));
 
-updateWallet();
+renderShop();updateWalletDisplays();renderHistory();
 </script>
 </body>
 </html>
