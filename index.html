@@ -3,196 +3,349 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>MM2 Marketplace — Demo</title>
+<title>MM2 Market — Demo</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
 <style>
-  /* Dark neon theme, simple responsive grid */
   :root{
-    --bg:#0b0f14; --card:#0f1720; --muted:#94a3b8;
-    --accent:#7c5cff; --accent2:#00d4ff; --glass: rgba(255,255,255,0.03);
+    --bg:#0f1114; --panel:#121418; --muted:#9aa6b6;
+    --accent:#7c5cff; --accent2:#8a34b3; --neon:#02d07b;
+    --card-bg:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.00));
   }
   *{box-sizing:border-box}
-  body{margin:0;font-family:Inter, system-ui, Arial;background:linear-gradient(180deg,#05060a,#071025 60%);color:#e6eef8}
-  header{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;background:linear-gradient(90deg,rgba(124,92,255,0.06), rgba(0,212,255,0.03));border-bottom:1px solid rgba(255,255,255,0.03)}
+  body{margin:0;font-family:Inter,system-ui,Arial;color:#e6eef8;background:linear-gradient(180deg,#0b0e11,#0a0d11 40%);}
+  .app{display:flex;height:100vh;overflow:hidden}
+  /* sidebar */
+  .sidebar{width:260px;background:#0b0d10;border-right:1px solid rgba(255,255,255,0.02);padding:28px 18px;display:flex;flex-direction:column;gap:18px}
   .brand{display:flex;gap:12px;align-items:center}
-  .logo{width:44px;height:44px;border-radius:8px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-weight:700;color:#051022}
-  nav{display:flex;gap:8px;align-items:center}
-  nav button{background:transparent;border:1px solid rgba(255,255,255,0.04);color:var(--muted);padding:8px 12px;border-radius:8px;cursor:pointer}
-  .wallet{background:var(--card);padding:9px 12px;border-radius:10px;display:flex;gap:8px;align-items:center;border:1px solid rgba(255,255,255,0.02)}
-  .container{max-width:1100px;margin:22px auto;padding:0 16px}
-  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px}
-  .card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border-radius:12px;padding:12px;border:1px solid rgba(255,255,255,0.03);box-shadow:0 6px 18px rgba(2,6,23,0.6)}
-  .card img{width:100%;height:140px;object-fit:cover;border-radius:8px}
-  .title{font-weight:700;margin:8px 0 4px}
+  .logo{width:44px;height:44px;border-radius:6px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-weight:800;color:#071028}
+  .brand .title{font-weight:700}
+  .nav{margin-top:12px;display:flex;flex-direction:column;gap:6px}
+  .nav button{background:transparent;color:#cbd6e6;padding:12px 14px;border-radius:8px;text-align:left;border:1px solid transparent;cursor:pointer;display:flex;gap:12px;align-items:center}
+  .nav button.active{background:transparent;border:1px solid rgba(124,92,255,0.16);box-shadow:0 8px 24px rgba(10,8,20,0.6);color:#fff}
+  .nav button svg{opacity:0.7}
+  /* main area */
+  .main{flex:1;padding:34px;overflow:auto}
+  .page-title{font-size:34px;margin:0 0 16px}
+  .content-card{background:var(--panel);border-radius:12px;padding:18px;border:1px solid rgba(255,255,255,0.02);box-shadow:0 4px 18px rgba(2,6,20,0.4)}
+  /* shop grid */
+  .controls{display:flex;gap:12px;align-items:center;margin-bottom:18px}
+  .search{flex:1;padding:12px;border-radius:8px;background:#0c0f12;border:1px solid rgba(255,255,255,0.02);color:#cfe4ff}
+  .filter, .walletbox{padding:10px 12px;border-radius:10px;background:#0c0f12;border:1px solid rgba(124,92,255,0.08);color:var(--muted)}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px;margin-top:18px}
+  .card{background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(0,0,0,0.02));border-radius:12px;padding:16px;border:1px solid rgba(255,255,255,0.02)}
+  .card img{width:100%;height:160px;object-fit:contain;border-radius:8px;margin-bottom:8px}
+  .title{font-weight:700}
   .muted{color:var(--muted);font-size:13px}
-  .price{font-weight:800;color:var(--accent);margin-top:6px}
-  .btn{display:inline-block;padding:8px 10px;border-radius:8px;border:0;background:linear-gradient(90deg,var(--accent),var(--accent2));color:#021;cursor:pointer}
-  .secondary{background:transparent;border:1px solid rgba(255,255,255,0.04);color:var(--muted)}
-  .topbar{display:flex;gap:12px;align-items:center}
-  .controls{display:flex;gap:10px;align-items:center}
-  .section-title{font-size:18px;margin:8px 0;color:#cfe4ff}
-  footer{padding:18px;text-align:center;color:var(--muted);font-size:13px}
-  /* modal */
-  .modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,0.6);z-index:50}
-  .modal.open{display:flex}
-  .modal-card{background:var(--card);padding:18px;border-radius:12px;min-width:320px;max-width:720px;border:1px solid rgba(255,255,255,0.03)}
-  .row{display:flex;gap:8px;align-items:center}
-  input,select,textarea{width:100%;padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:#e8f4ff}
-  .small{font-size:13px;color:var(--muted)}
+  .price{color:var(--neon);font-weight:800;margin-top:6px}
+  .card .actions{display:flex;gap:8px;margin-top:10px}
+  .btn{padding:10px 12px;border-radius:8px;border:0;background:linear-gradient(90deg,var(--accent),var(--accent2));color:#021;cursor:pointer}
+  .btn.secondary{background:transparent;border:1px solid rgba(255,255,255,0.04);color:var(--muted)}
+  /* wallet page */
+  .wallet-grid{display:grid;grid-template-columns:1fr;gap:16px}
+  .wallet-top{display:flex;justify-content:space-between;gap:12px;align-items:center}
+  .top-box{padding:20px;border-radius:12px;border:1px solid rgba(255,255,255,0.02);background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(0,0,0,0.02))}
+  .stat-big{font-size:28px;font-weight:800;color:#fff}
+  .topup-amount{width:220px;padding:12px;border-radius:8px;background:#0b0d11;border:1px solid rgba(255,255,255,0.02);color:#cfe4ff}
+  .preset-row{display:flex;gap:12px;margin-top:10px}
+  .preset{flex:1;padding:12px;border-radius:10px;background:#0b0d11;border:1px solid rgba(255,255,255,0.02);text-align:center;cursor:pointer}
+  .pay-options{display:flex;gap:12px;margin-top:14px}
+  .pay-btn{flex:1;padding:14px;border-radius:10px;background:#0c0f12;border:1px solid rgba(255,255,255,0.02);cursor:pointer;text-align:center}
+  .note{background:#2b2a24;padding:10px;border-radius:8px;color:#f9f0c9;margin-top:14px}
+  /* profile cards */
+  .profile-row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .profile-stat{padding:18px;border-radius:10px;border:1px solid rgba(2,200,120,0.12)}
+  .muted-small{color:var(--muted);font-size:13px}
   /* responsive */
-  @media(max-width:640px){ .grid{grid-template-columns:repeat(2,1fr)} header{padding:10px} .logo{width:40px;height:40px} }
+  @media(max-width:900px){
+    .sidebar{display:none}
+    .profile-row{grid-template-columns:1fr}
+    .grid{grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
+  }
 </style>
-
-<!-- PayPal SDK mit deiner Live-Client-ID -->
+<!-- PayPal SDK - ACHTUNG: hier die Client-ID eintragen (Sandbox oder Live). 
+     Zur Demo benutze deine Sandbox-ID; für Live Zahlungen muss dies die Live-Client-ID sein. -->
 <script src="https://www.paypal.com/sdk/js?client-id=AZLjLoylhP8trchxDw9BolwD2rlIzZVbYyBCbAvgtZ8r2ndbmc49l4RXlBChcNJ9Prx2Jf5_RnsdnEz_&currency=USD"></script>
-
 </head>
 <body>
-
-<header>
-  <div class="brand">
-    <div class="logo">MM2</div>
-    <div>
-      <div style="font-weight:800">MM2 Marketplace (Demo)</div>
-      <div style="font-size:12px;color:var(--muted)">Kaufen, verkaufen & mock trades</div>
-    </div>
-  </div>
-
-  <div class="topbar">
-    <div class="wallet" id="walletBox">Balance: $<span id="wallet">0.00</span></div>
-    <div style="width:10px"></></div>
-    <div class="controls">
-      <button class="secondary" onclick="showSell()">Verkaufen</button>
-      <button class="secondary" onclick="showInventory()">Inventar</button>
-      <button class="btn" onclick="showTopup()">Guthaben aufladen</button>
-    </div>
-  </div>
-</header>
-
-<main class="container">
-  <div style="display:flex;justify-content:space-between;align-items:center">
-    <h2 class="section-title">Marktplatz</h2>
-    <div class="small">Provision bei Verkauf: <strong>15%</strong></div>
-  </div>
-
-  <div class="grid" id="marketGrid"></div>
-
-  <h3 class="section-title" style="margin-top:22px">Warenkorb</h3>
-  <div id="cartArea" class="card" style="padding:14px">
-    <div id="cartList" class="small">Warenkorb ist leer</div>
-    <div style="margin-top:12px">
-      <button class="btn" onclick="checkout()">Mit Wallet kaufen</button>
-      <button class="secondary" onclick="clearCart()">Leeren</button>
-    </div>
-  </div>
-
-  <h3 class="section-title" style="margin-top:20px">Trade-Queue (mocked)</h3>
-  <div id="queueArea" class="card small">Keine aktiven Trades</div>
-</main>
-
-<!-- Modals -->
-<div id="modalTopup" class="modal">
-  <div class="modal-card">
-    <h3>Guthaben aufladen</h3>
-    <p class="small">Bezahlen mit PayPal:</p>
-    <div id="paypal-button-container"></div>
-    <div style="margin-top:8px;text-align:right"><button class="secondary" onclick="closeTopup()">Schließen</button></div>
-  </div>
-</div>
-
-<div id="modalSell" class="modal">
-  <div class="modal-card">
-    <h3>Item verkaufen</h3>
-    <div style="display:grid;gap:8px">
-      <input id="sellName" placeholder="Item Name (z. B. Sunset Godly Knife)" />
-      <input id="sellPrice" type="number" placeholder="Preis in USD" />
-      <input id="sellImage" placeholder="Bild-URL (optional)" />
-      <div style="display:flex;gap:8px;justify-content:flex-end">
-        <button class="btn" onclick="submitSell()">Verkaufen (Listing)</button>
-        <button class="secondary" onclick="closeSell()">Abbrechen</button>
+<div class="app">
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <div class="logo">MM2</div>
+      <div>
+        <div class="title">MM2 Market</div>
+        <div style="font-size:12px;color:var(--muted)">Trading Hub</div>
       </div>
-      <div class="small">Website nimmt automatisch 15% Provision beim Verkauf.</div>
     </div>
-  </div>
-</div>
 
-<div id="modalInventory" class="modal">
-  <div class="modal-card" style="max-width:900px">
-    <h3>Mein Inventar</h3>
-    <div id="invList" class="grid" style="margin-top:10px"></div>
-    <div style="margin-top:12px;text-align:right"><button class="secondary" onclick="closeInventory()">Schließen</button></div>
-  </div>
+    <nav class="nav" id="nav">
+      <button data-page="shop" class="active">🏠 Shop</button>
+      <button data-page="cart">🧺 Warenkorb</button>
+      <button data-page="add">➕ Items hinzufügen</button>
+      <button data-page="inventory">📦 Mein Inventar</button>
+      <button data-page="wallet">💳 Wallet</button>
+      <button data-page="history">🕘 Verlauf</button>
+      <button data-page="profile">👤 Profil</button>
+    </nav>
+  </aside>
+
+  <main class="main">
+    <!-- SHOP -->
+    <section id="page-shop" class="page">
+      <h1 class="page-title">MM2 Item Shop <div style="font-size:14px;color:var(--muted);font-weight:400">Kaufe die besten MM2 Items</div></h1>
+
+      <div class="content-card">
+        <div class="controls">
+          <input id="searchInput" class="search" placeholder="Item suchen..." />
+          <div class="filter">Alle Seltenheiten ▾</div>
+          <div class="filter">Alle Typen ▾</div>
+          <div class="walletbox">Guthaben: <strong id="walletDisplay">$0.00</strong></div>
+        </div>
+
+        <div id="shopGrid" class="grid"></div>
+      </div>
+    </section>
+
+    <!-- CART -->
+    <section id="page-cart" class="page" style="display:none">
+      <h1 class="page-title">Warenkorb</h1>
+      <div class="content-card" id="cartCard">
+        <div id="cartContent" style="padding:18px">Dein Warenkorb ist leer</div>
+      </div>
+    </section>
+
+    <!-- ADD ITEM -->
+    <section id="page-add" class="page" style="display:none">
+      <h1 class="page-title">Items hinzufügen</h1>
+      <div class="content-card">
+        <div style="font-size:15px;color:var(--muted)">Trade deine Items mit unserem Bot</div>
+        <div style="margin-top:12px">
+          <div style="padding:18px;border-radius:10px;background:#0b0d11">
+            <div style="font-weight:700;margin-bottom:8px">MM2 Trading Bot</div>
+            <div class="muted-small">Trade-Code kopieren</div>
+            <div style="display:flex;gap:8px;margin-top:8px">
+              <input id="tradeCode" value="MM2-PNTLE8WHC" style="flex:1;padding:10px;border-radius:8px;background:#0a0c0f;border:1px solid rgba(255,255,255,0.02);color:#e6eef8" />
+              <button class="btn" onclick="copyTrade()">Kopieren</button>
+            </div>
+            <div style="margin-top:12px" class="muted-small">Bot Username: <strong>MM2MarketBot</strong></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- INVENTORY -->
+    <section id="page-inventory" class="page" style="display:none">
+      <h1 class="page-title">Mein Inventar</h1>
+      <div class="content-card">
+        <div id="invContent" style="min-height:140px;display:flex;align-items:center;justify-content:center;color:var(--muted)">Du hast noch keine Items</div>
+      </div>
+    </section>
+
+    <!-- WALLET -->
+    <section id="page-wallet" class="page" style="display:none">
+      <h1 class="page-title">Wallet</h1>
+      <div class="wallet-grid">
+        <div class="top-box">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <div>
+              <div class="muted-small">Aktuelles Guthaben</div>
+              <div class="stat-big" id="walletBig">$0.00</div>
+              <div class="muted-small">Gesamteinnahmen: <strong id="ownerProfit">$0.00</strong></div>
+            </div>
+            <div style="text-align:right">
+              <button class="btn" onclick="clearWallet()">Guthaben löschen</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="content-card">
+          <h3>Guthaben aufladen</h3>
+          <div style="margin-top:12px">
+            <input id="amountInput" class="topup-amount" type="number" min="1" step="1" placeholder="Betrag ($)" />
+            <div class="preset-row">
+              <div class="preset" onclick="setAmount(10)">$10</div>
+              <div class="preset" onclick="setAmount(25)">$25</div>
+              <div class="preset" onclick="setAmount(50)">$50</div>
+              <div class="preset" onclick="setAmount(100)">$100</div>
+            </div>
+
+            <div class="note">Demo-Modus: In der echten Version würdest du hier mit PayPal oder Kreditkarte bezahlen.</div>
+
+            <div class="pay-options">
+              <div class="pay-btn" id="cardBtn" onclick="fakeCard()">💳 Mit Kreditkarte</div>
+              <div class="pay-btn" id="paypalBtnHolder">
+                <!-- PayPal button will render here -->
+                <div id="paypal-button-container" style="min-height:44px"></div>
+              </div>
+            </div>
+            <div class="muted-small" style="margin-top:10px">Abgewickelt durch PayPal</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- HISTORY -->
+    <section id="page-history" class="page" style="display:none">
+      <h1 class="page-title">Transaktionsverlauf</h1>
+      <div class="content-card" id="historyCard" style="min-height:140px">
+        <div id="historyContent" class="muted-small">Noch keine Transaktionen</div>
+      </div>
+    </section>
+
+    <!-- PROFILE -->
+    <section id="page-profile" class="page" style="display:none">
+      <h1 class="page-title">Profil</h1>
+      <div class="profile-row">
+        <div class="content-card">
+          <h3>Account Info</h3>
+          <div style="margin-top:8px">
+            <div class="muted-small">Name</div>
+            <div style="font-weight:700">jonasaigner22</div>
+            <div class="muted-small" style="margin-top:8px">Email</div>
+            <div style="font-weight:700">jonasaigner22@gmail.com</div>
+            <div class="muted-small" style="margin-top:8px">Rolle</div>
+            <div style="font-weight:700">Admin</div>
+          </div>
+        </div>
+
+        <div class="content-card">
+          <h3>Roblox Verknüpfung</h3>
+          <input id="robloxUser" placeholder="Dein Roblox Username" style="padding:12px;background:#0b0d11;border:1px solid rgba(255,255,255,0.02);border-radius:8px;color:#e6eef8" />
+          <div style="margin-top:12px">
+            <button class="btn" onclick="saveRoblox()">Speichern</button>
+          </div>
+        </div>
+
+      </div>
+
+      <div style="margin-top:18px" class="content-card">
+        <h3>Statistiken</h3>
+        <div style="display:flex;gap:24px;margin-top:12px">
+          <div style="flex:1">
+            <div class="muted-small">Guthaben</div>
+            <div style="font-weight:800;color:var(--neon)">$<span id="statWallet">0.00</span></div>
+          </div>
+          <div style="flex:1">
+            <div class="muted-small">Gesamteinnahmen</div>
+            <div style="font-weight:800">$<span id="statEarnings">0.00</span></div>
+          </div>
+          <div style="flex:1">
+            <div class="muted-small">Account seit</div>
+            <div style="font-weight:800">1.10.2025</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
 </div>
 
 <script>
-const OWNER_KEY = 'mm2_owner_profit';
-function $(id){return document.getElementById(id)}
+/* ---------------------------
+   Simple demo marketplace JS
+   ---------------------------
+   - Data stored in localStorage
+   - PayPal buttons (client-side) used in demo to top up wallet
+   - To accept real money: use server-side order creation and server-side capture + webhooks
+*/
 
+const STORAGE = {
+  ITEMS: 'mm2_items_v2',
+  CART: 'mm2_cart_v2',
+  WALLET: 'mm2_wallet_v2',
+  INV: 'mm2_inv_v2',
+  QUEUE: 'mm2_queue_v2',
+  OWN: 'mm2_owner_v2',
+  TX: 'mm2_tx_v2'
+};
+
+function $(s){return document.querySelector(s)}
+function $all(s){return Array.from(document.querySelectorAll(s))}
+
+/* initial dataset */
 const initialItems = [
-  {id:'sunset-1',name:'Sunset Godly Knife',price:200,image:'https://static.wikia.nocookie.net/murder-mystery-2/images/e/e3/SunsetKnife.webp/revision/latest?cb=20250719033556',rarity:'Godly'},
-  {id:'knife-1',name:'Vanilla Knife',price:25,image:'https://via.placeholder.com/400x200?text=Vanilla+Knife',rarity:'Common'},
-  {id:'godly-axe',name:'Crimson Axe',price:150,image:'https://via.placeholder.com/400x200?text=Crimson+Axe',rarity:'Godly'},
-  {id:'rare-1',name:'Sunset Pet',price:80,image:'https://via.placeholder.com/400x200?text=Sunset+Pet',rarity:'Rare'},
-  {id:'rare-2',name:'Cold Katana',price:120,image:'https://via.placeholder.com/400x200?text=Cold+Katana',rarity:'Rare'},
-  {id:'epic-1',name:'Phantom Blade',price:60,image:'https://via.placeholder.com/400x200?text=Phantom+Blade',rarity:'Epic'}
+  {id:'sunset-1',name:'Sunset',price:150,image:'https://static.wikia.nocookie.net/murder-mystery-2/images/e/e3/SunsetKnife.webp/revision/latest?cb=20250719033556',rarity:'Godly',type:'knife'},
+  {id:'luger-1',name:'Luger',price:75,image:'https://via.placeholder.com/400x200?text=Luger',rarity:'Legendary',type:'gun'},
+  {id:'chroma-1',name:'Chroma Seer',price:300,image:'https://via.placeholder.com/400x200?text=Chroma+Seer',rarity:'Ancient',type:'knife'}
 ];
 
-let items = JSON.parse(localStorage.getItem('mm2_items')) || initialItems.slice();
-let cart = JSON.parse(localStorage.getItem('mm2_cart')) || [];
-let wallet = parseFloat(localStorage.getItem('mm2_wallet')||0);
-let inventory = JSON.parse(localStorage.getItem('mm2_inventory')) || [];
-let queue = JSON.parse(localStorage.getItem('mm2_queue')) || [];
-let ownerProfit = parseFloat(localStorage.getItem(OWNER_KEY) || 0);
+let items = JSON.parse(localStorage.getItem(STORAGE.ITEMS)) || initialItems.slice();
+let cart = JSON.parse(localStorage.getItem(STORAGE.CART)) || [];
+let wallet = parseFloat(localStorage.getItem(STORAGE.WALLET) || 0);
+let inv = JSON.parse(localStorage.getItem(STORAGE.INV)) || [];
+let queue = JSON.parse(localStorage.getItem(STORAGE.QUEUE)) || [];
+let ownerProfit = parseFloat(localStorage.getItem(STORAGE.OWN) || 0);
+let txs = JSON.parse(localStorage.getItem(STORAGE.TX)) || [];
 
 function saveAll(){
-  localStorage.setItem('mm2_items', JSON.stringify(items));
-  localStorage.setItem('mm2_cart', JSON.stringify(cart));
-  localStorage.setItem('mm2_wallet', wallet.toFixed(2));
-  localStorage.setItem('mm2_inventory', JSON.stringify(inventory));
-  localStorage.setItem('mm2_queue', JSON.stringify(queue));
-  localStorage.setItem(OWNER_KEY, ownerProfit.toFixed(2));
+  localStorage.setItem(STORAGE.ITEMS, JSON.stringify(items));
+  localStorage.setItem(STORAGE.CART, JSON.stringify(cart));
+  localStorage.setItem(STORAGE.WALLET, wallet.toFixed(2));
+  localStorage.setItem(STORAGE.INV, JSON.stringify(inv));
+  localStorage.setItem(STORAGE.QUEUE, JSON.stringify(queue));
+  localStorage.setItem(STORAGE.OWN, ownerProfit.toFixed(2));
+  localStorage.setItem(STORAGE.TX, JSON.stringify(txs));
 }
 
-function renderMarket(){
-  const grid = $('marketGrid'); grid.innerHTML='';
+/* ----------------- render & UI ----------------- */
+function renderShop(){
+  const grid = $('#shopGrid'); grid.innerHTML='';
   items.forEach(it=>{
-    const c = document.createElement('div'); c.className='card';
-    c.innerHTML = `
+    const div = document.createElement('div'); div.className='card';
+    div.innerHTML = `
       <img src="${it.image}" alt="${escapeHtml(it.name)}" />
       <div class="title">${escapeHtml(it.name)}</div>
-      <div class="muted">${it.rarity || 'Unknown'}</div>
-      <div class="price">$${it.price.toFixed ? it.price.toFixed(2) : (it.price)}</div>
-      <div style="margin-top:8px;display:flex;gap:8px">
-        <button class="btn" onclick='addToCart("${it.id}")'>Kaufen</button>
-        <button class="secondary" onclick='quickBuy("${it.id}")'>Quick-Buy</button>
+      <div class="muted">${escapeHtml(it.type || it.rarity)}</div>
+      <div class="price">$${Number(it.price).toFixed(2)}</div>
+      <div class="actions">
+        <button class="btn" onclick='addToCart("${it.id}")'>Sofort kaufen</button>
+        <button class="btn secondary" onclick='addToCart("${it.id}")'>🛒</button>
       </div>
     `;
-    grid.appendChild(c);
+    grid.appendChild(div);
   });
+  updateWalletDisplays();
   renderCart();
-  renderQueue();
-  $('wallet').textContent = wallet.toFixed(2);
+  renderInv();
+  renderHistory();
 }
+
+function renderCart(){
+  const el = $('#cartContent');
+  if(cart.length===0){ el.innerHTML='Dein Warenkorb ist leer'; return; }
+  let sum = 0;
+  let html = '<ul style="margin:0;padding-left:18px">';
+  cart.forEach((c,i)=>{ sum += Number(c.price); html += `<li>${escapeHtml(c.name)} — $${Number(c.price).toFixed(2)} <button class="btn secondary" onclick="removeFromCart(${i})" style="margin-left:8px">x</button></li>` })
+  html += `</ul><div style="margin-top:12px"><strong>Summe: $${sum.toFixed(2)}</strong></div><div style="margin-top:12px"><button class="btn" onclick="checkout()">Mit Wallet kaufen</button></div>`;
+  el.innerHTML = html;
+}
+
+function renderInv(){
+  const el = $('#invContent');
+  if(inv.length===0){ el.innerHTML='Du hast noch keine Items'; return; }
+  el.innerHTML = inv.map(i=>`<div style="display:inline-block;width:220px;margin:8px" class="card"><img src="${i.image}"/><div class="title">${escapeHtml(i.name)}</div><div class="muted">$${Number(i.price).toFixed(2)}</div></div>`).join('');
+}
+
+function renderHistory(){
+  const el = $('#historyContent');
+  if(txs.length===0) { el.innerHTML = 'Noch keine Transaktionen'; return; }
+  el.innerHTML = txs.map(t=>`<div style="padding:8px;border-bottom:1px dashed rgba(255,255,255,0.02)">${t.type} — ${t.amount} — ${t.note || ''} <span class="muted-small" style="float:right">${new Date(t.time).toLocaleString()}</span></div>`).join('');
+}
+
+function updateWalletDisplays(){
+  $('#walletDisplay').textContent = `$${wallet.toFixed(2)}`;
+  $('#walletBig').textContent = `$${wallet.toFixed(2)}`;
+  $('#statWallet').textContent = wallet.toFixed(2);
+  $('#ownerProfit').textContent = ownerProfit.toFixed(2);
+  $('#wallet').textContent = wallet.toFixed(2);
+}
+
+/* ---------- helpers ---------- */
 function escapeHtml(s){ return (s+'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
 
+/* ---------- cart logic ---------- */
 function addToCart(id){
-  const it = items.find(x=>x.id===id);
-  if(!it) return alert('Artikel nicht gefunden');
-  cart.push(it);
-  saveAll();
-  renderCart();
-}
-function quickBuy(id){
-  addToCart(id);
-  checkout();
-}
-function renderCart(){
-  const el = $('cartList');
-  if(cart.length===0){ el.innerHTML='Warenkorb ist leer'; return; }
-  let html = '<ul style="margin:0;padding-left:16px">';
-  let sum = 0;
-  cart.forEach((c,i)=>{ sum += Number(c.price); html += `<li>${escapeHtml(c.name)} — $${Number(c.price).toFixed(2)} <button class="secondary" onclick="removeFromCart(${i})" style="margin-left:8px">x</button></li>` })
-  html += `</ul><div style="margin-top:8px"><strong>Summe: $${sum.toFixed(2)}</strong></div>`;
-  el.innerHTML = html;
+  const it = items.find(x=>x.id===id); if(!it) return alert('Artikel nicht gefunden');
+  cart.push(it); saveAll(); renderCart();
 }
 function removeFromCart(i){ cart.splice(i,1); saveAll(); renderCart(); }
 function clearCart(){ cart=[]; saveAll(); renderCart(); }
@@ -204,85 +357,91 @@ function checkout(){
   wallet -= total;
   const commission = total * 0.15;
   ownerProfit += commission;
-  cart.forEach(it => inventory.push(it));
+  cart.forEach(it=>inv.push(it));
   cart.forEach(c=>{
     const idx = items.findIndex(x=>x.id===c.id);
     if(idx>=0) items.splice(idx,1);
   });
-  const q = {id:'q'+Date.now(),items:cart.map(x=>x.name),total:total,status:'pending',created:Date.now()};
-  queue.push(q);
+  txs.push({type:'Kauf',amount: total.toFixed(2),time:Date.now(),note: cart.map(x=>x.name).join(', ')});
   cart = [];
-  saveAll();
-  renderMarket();
-  setTimeout(()=>{ q.status='completed'; saveAll(); renderQueue(); alert('Trade abgeschlossen: ' + q.items.join(', ')); }, 4000 + Math.random()*4000);
-  alert('Kauf ausgelöst — Trade wird vorbereitet (mock).');
+  saveAll(); renderShop();
+  alert('Kauf ausgeführt (Demo). Items sind jetzt in deinem Inventar.');
 }
 
-function renderQueue(){
-  const el = $('queueArea'); 
-  if(queue.length===0){ el.innerHTML='Keine aktiven Trades'; return; }
-  el.innerHTML = queue.map(q=>`<div style="padding:8px;border-bottom:1px dashed rgba(255,255,255,0.03)"><strong>${q.status.toUpperCase()}</strong> — ${q.items.join(', ')} — $${q.total.toFixed(2)} <span class="small">(${new Date(q.created).toLocaleTimeString()})</span></div>`).join('');
+/* ---------- wallet topup (demo + PayPal) ---------- */
+function setAmount(v){ $('#amountInput').value = v; }
+function fakeCard(){
+  const amt = parseFloat($('#amountInput').value||0);
+  if(!amt || amt<=0) return alert('Gib einen Betrag > 0 ein');
+  wallet += amt; txs.push({type:'Topup (Karte)',amount:amt.toFixed(2),time:Date.now(),note:'Demo-Karte'}); saveAll(); updateWalletDisplays(); alert('Demo-Karte: Zahlung erfolgreich');
 }
 
-function showTopup(){ 
-  $('modalTopup').classList.add('open'); 
-  renderPayPalButton(10); // Standard $10 topup
-}
-function closeTopup(){ $('modalTopup').classList.remove('open'); }
+/* copy trade-code */
+function copyTrade(){ const el = $('#tradeCode'); el.select(); document.execCommand('copy'); alert('Trade-Code kopiert'); }
 
-function renderPayPalButton(amount){
-  document.getElementById('paypal-button-container').innerHTML = "";
+/* profile */
+function saveRoblox(){ const v = $('#robloxUser').value.trim(); if(!v) return alert('Gib einen Roblox Username ein'); alert('Roblox Username gespeichert (Demo)'); }
+
+/* wallet clear */
+function clearWallet(){ if(!confirm('Wallet löschen?')) return; wallet = 0; ownerProfit = 0; txs = []; saveAll(); updateWalletDisplays(); renderHistory(); alert('Demo Wallet gelöscht'); }
+
+/* ---------------- PayPal Buttons (client-side demo) ----------------
+   Note: For production use, create orders on your server and capture server-side.
+   The code below uses client-side Buttons for demo/testing only.
+-------------------------------------------------------------------- */
+function renderPayPalButtons(){
+  // render once
+  if(!window.paypal) return console.warn('PayPal SDK not loaded');
   paypal.Buttons({
-    style: { color: 'blue', shape: 'rect', label: 'paypal' },
-    createOrder: (data, actions) => {
-      return actions.order.create({
-        purchase_units: [{ amount: { value: amount.toString() } }]
+    style:{color:'blue',shape:'rect',label:'paypal'},
+    createOrder: function(data, actions){
+      const amt = parseFloat($('#amountInput').value || 0);
+      if(!amt || amt<=0){ alert('Gib einen Betrag >0 ein'); return Promise.reject(); }
+      // client-side order (demo) — for live use server-side creation is recommended.
+      return actions.order.create({purchase_units:[{amount:{value:amt.toString()}}]});
+    },
+    onApprove: function(data, actions){
+      return actions.order.capture().then(function(details){
+        const amt = parseFloat($('#amountInput').value || 0);
+        // credit wallet
+        wallet += amt;
+        txs.push({type:'Topup (PayPal)',amount:amt.toFixed(2),time:Date.now(),note:'Payer: '+(details.payer.name?.given_name||'')});
+        saveAll(); updateWalletDisplays(); renderHistory();
+        alert('Zahlung erfolgreich (Demo). Betrag: $' + amt.toFixed(2));
       });
     },
-    onApprove: (data, actions) => {
-      return actions.order.capture().then(details => {
-        alert("Zahlung erfolgreich von " + details.payer.name.given_name);
-        wallet += amount;
-        saveAll();
-        $('wallet').textContent = wallet.toFixed(2);
-        closeTopup();
-      });
-    }
+    onError: function(err){ console.error('PayPal error', err); alert('PayPal Fehler: ' + err); }
   }).render('#paypal-button-container');
 }
 
-function showSell(){ $('modalSell').classList.add('open'); }
-function closeSell(){ $('modalSell').classList.remove('open'); }
-function submitSell(){
-  const name = $('sellName').value.trim(); const price = parseFloat($('sellPrice').value||0); const img = $('sellImage').value.trim() || 'https://via.placeholder.com/400x200?text=MM2+Item';
-  if(!name || !price) return alert('Name und Preis angeben');
-  const id = name.toLowerCase().replace(/[^a-z0-9]+/g,'-')+'-'+Date.now();
-  const it = {id,name,price, image:img, rarity:'User-listed'};
-  items.unshift(it);
-  saveAll();
-  closeSell();
-  renderMarket();
-  alert('Dein Item ist jetzt im Marktplatz gelistet. Wenn es verkauft wird, erhältst du 85% (Website behält 15%).');
+/* ---------------- routing & init ---------------- */
+function switchPage(name){
+  $all('.page').forEach(p=>p.style.display='none');
+  const el = document.getElementById('page-'+name);
+  if(el) el.style.display = 'block';
+  $all('#nav button').forEach(b=>b.classList.remove('active'));
+  const btn = document.querySelector(`#nav button[data-page="${name}"]`);
+  if(btn) btn.classList.add('active');
+  // render specific
+  if(name==='shop') renderShop();
+  if(name==='cart') renderCart();
+  if(name==='inventory') renderInv();
+  if(name==='wallet') renderPayPalButtons();
 }
 
-function showInventory(){ $('modalInventory').classList.add('open'); renderInventory(); }
-function closeInventory(){ $('modalInventory').classList.remove('open'); }
-function renderInventory(){
-  const el = $('invList'); el.innerHTML='';
-  if(inventory.length===0){ el.innerHTML='<div class="card small">Dein Inventar ist leer</div>'; return; }
-  inventory.forEach(it=>{
-    const c = document.createElement('div'); c.className='card';
-    c.innerHTML = `<img src="${it.image}" /><div class="title">${escapeHtml(it.name)}</div><div class="muted">$${Number(it.price).toFixed(2)}</div>`;
-    el.appendChild(c);
-  });
-}
+/* attach nav */
+$all('#nav button').forEach(b=>{
+  b.addEventListener('click', ()=> switchPage(b.getAttribute('data-page')));
+});
 
-/* init */
-renderMarket();
+/* initial render */
+renderShop();
+updateWalletDisplays();
+renderHistory();
+
+/* debug */
+window.DEBUG = {items,cart,wallet,inv,queue,ownerProfit,txs};
+
 </script>
-
-<footer>
-  Demo Marketplace — Guthaben-Aufladung jetzt mit PayPal-Button.
-</footer>
 </body>
 </html>
