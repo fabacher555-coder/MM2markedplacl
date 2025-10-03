@@ -1,188 +1,111 @@
-<!DOCTYPE html>
-<html class="dark" lang="en">
+<!doctype html>
+<html lang="de">
 <head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Marketplace mit PayPal</title>
-<link href="data:image/x-icon;base64," rel="icon" type="image/x-icon"/>
-<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<link href="https://fonts.googleapis.com" rel="preconnect"/>
-<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
-
-<!-- ⚠️ HIER deine PayPal Client-ID eintragen -->
-<script src="https://www.paypal.com/sdk/js?client-id=AZLjLoylhP8trchxDw9BolwD2rlIzZVbYyBCbAvgtZ8r2ndbmc49l4RXlBChcNJ9Prx2Jf5_RnsdnEz_&currency=USD"></script>
-
-<script>
-  tailwind.config = {
-    darkMode: "class",
-    theme: {
-      extend: {
-        colors: {
-          primary: "#0d57a0",
-          "background-light": "#f6f7f8",
-          "background-dark": "#101922",
-        },
-        fontFamily: {
-          display: ["Space Grotesk", "sans-serif"],
-        },
-        borderRadius: {
-          DEFAULT: "0.25rem",
-          lg: "0.5rem",
-          xl: "0.75rem",
-          full: "9999px",
-        },
-      },
-    },
-  };
-</script>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>MM2 Market — Demo</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
 <style>
-  .material-symbols-outlined {
-    font-variation-settings: "FILL" 1, "wght" 400, "GRAD" 0, "opsz" 24;
+  :root{
+    --bg:#0f1114; --panel:#121418; --muted:#9aa6b6;
+    --accent:#7c5cff; --accent2:#8a34b3; --neon:#02d07b;
+    --card-bg:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.00));
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:Inter,system-ui,Arial;color:#e6eef8;background:linear-gradient(180deg,#0b0e11,#0a0d11 40%);}
+  .app{display:flex;height:100vh;overflow:hidden}
+  /* sidebar */
+  .sidebar{width:260px;background:#0b0d10;border-right:1px solid rgba(255,255,255,0.02);padding:28px 18px;display:flex;flex-direction:column;gap:18px}
+  .brand{display:flex;gap:12px;align-items:center}
+  .logo{width:44px;height:44px;border-radius:6px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-weight:800;color:#071028}
+  .brand .title{font-weight:700}
+  .nav{margin-top:12px;display:flex;flex-direction:column;gap:6px}
+  .nav button{background:transparent;color:#cbd6e6;padding:12px 14px;border-radius:8px;text-align:left;border:1px solid transparent;cursor:pointer;display:flex;gap:12px;align-items:center}
+  .nav button.active{background:transparent;border:1px solid rgba(124,92,255,0.16);box-shadow:0 8px 24px rgba(10,8,20,0.6);color:#fff}
+  .nav button svg{opacity:0.7}
+  /* main area */
+  .main{flex:1;padding:34px;overflow:auto}
+  .page-title{font-size:34px;margin:0 0 16px}
+  .content-card{background:var(--panel);border-radius:12px;padding:18px;border:1px solid rgba(255,255,255,0.02);box-shadow:0 4px 18px rgba(2,6,20,0.4)}
+  /* shop grid */
+  .controls{display:flex;gap:12px;align-items:center;margin-bottom:18px}
+  .search{flex:1;padding:12px;border-radius:8px;background:#0c0f12;border:1px solid rgba(255,255,255,0.02);color:#cfe4ff}
+  .filter, .walletbox{padding:10px 12px;border-radius:10px;background:#0c0f12;border:1px solid rgba(124,92,255,0.08);color:var(--muted)}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px;margin-top:18px}
+  .card{background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(0,0,0,0.02));border-radius:12px;padding:16px;border:1px solid rgba(255,255,255,0.02)}
+  .card img{width:100%;height:160px;object-fit:contain;border-radius:8px;margin-bottom:8px}
+  .title{font-weight:700}
+  .muted{color:var(--muted);font-size:13px}
+  .price{color:var(--neon);font-weight:800;margin-top:6px}
+  .card .actions{display:flex;gap:8px;margin-top:10px}
+  .btn{padding:10px 12px;border-radius:8px;border:0;background:linear-gradient(90deg,var(--accent),var(--accent2));color:#021;cursor:pointer}
+  .btn.secondary{background:transparent;border:1px solid rgba(255,255,255,0.04);color:var(--muted)}
+  /* wallet page */
+  .wallet-grid{display:grid;grid-template-columns:1fr;gap:16px}
+  .wallet-top{display:flex;justify-content:space-between;gap:12px;align-items:center}
+  .top-box{padding:20px;border-radius:12px;border:1px solid rgba(255,255,255,0.02);background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(0,0,0,0.02))}
+  .stat-big{font-size:28px;font-weight:800;color:#fff}
+  .topup-amount{width:220px;padding:12px;border-radius:8px;background:#0b0d11;border:1px solid rgba(255,255,255,0.02);color:#cfe4ff}
+  .preset-row{display:flex;gap:12px;margin-top:10px}
+  .preset{flex:1;padding:12px;border-radius:10px;background:#0b0d11;border:1px solid rgba(255,255,255,0.02);text-align:center;cursor:pointer}
+  .pay-options{display:flex;gap:12px;margin-top:14px}
+  .pay-btn{flex:1;padding:14px;border-radius:10px;background:#0c0f12;border:1px solid rgba(255,255,255,0.02);cursor:pointer;text-align:center}
+  .note{background:#2b2a24;padding:10px;border-radius:8px;color:#f9f0c9;margin-top:14px}
+  /* profile cards */
+  .profile-row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .profile-stat{padding:18px;border-radius:10px;border:1px solid rgba(2,200,120,0.12)}
+  .muted-small{color:var(--muted);font-size:13px}
+  /* responsive */
+  @media(max-width:900px){
+    .sidebar{display:none}
+    .profile-row{grid-template-columns:1fr}
+    .grid{grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
   }
 </style>
-</head>
-<body class="bg-background-light dark:bg-background-dark font-display text-gray-800 dark:text-gray-200">
-<div class="flex min-h-screen">
-<aside class="w-80 bg-background-light dark:bg-background-dark p-6 shadow-lg flex flex-col justify-between">
-  <div>
-    <div class="flex items-center gap-4 mb-8">
-      <div class="w-12 h-12 rounded-full bg-cover bg-center" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDLLhFkQQHr3zMwWvDCRTD2iS7pDEvtZaYfY6o37sA9Ol_IJjqHuzl6cv3rbzpEC8jBs2kxMKw3a9v2DzaapnoTfU-Mkfg0iccDIUOJfHTmQIu2kPzPVtY6MiwVRyYOJo0OLE3licOpUYyWAJK-FnaTo9TTBIldC90TrxiRy5KC9Q7eujw9jOUXiWzwhjvpkioXtrDenAFmMXTzG6Fy-6PFt6KpPy4Tg87Ga9hxFRAXwib5ObDEOc-YThmgS5apsFlf-IOk4bSGkWw");'></div>
-      <div>
-        <h1 class="text-lg font-bold text-gray-900 dark:text-white">Sophia Carter</h1>
-        <p class="text-sm text-gray-500 dark:text-gray-400">@sophia_c</p>
-      </div>
-    </div>
-    <nav class="flex flex-col gap-2">
-      <a class="flex items-center gap-3 px-4 py-2 rounded-lg bg-primary text-white font-semibold shadow-md" href="#">
-        <span class="material-symbols-outlined text-xl">list</span>
-        <span>My Listings</span>
-      </a>
-      <a class="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-primary/10 dark:hover:bg-primary/20 text-gray-700 dark:text-gray-300" href="#">
-        <span class="material-symbols-outlined text-xl">history</span>
-        <span>Order History</span>
-      </a>
-      <a class="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-primary/10 dark:hover:bg-primary/20 text-gray-700 dark:text-gray-300" href="#">
-        <span class="material-symbols-outlined text-xl">settings</span>
-        <span>Account Settings</span>
-      </a>
-      <a class="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-primary/10 dark:hover:bg-primary/20 text-gray-700 dark:text-gray-300" href="#">
-        <span class="material-symbols-outlined text-xl">mail</span>
-        <span>Messages</span>
-      </a>
-    </nav>
-  </div>
-</aside>
 
-<main class="flex-1 p-8">
-  <div class="max-w-7xl mx-auto">
-    <div class="flex items-center justify-between mb-8">
-      <h2 class="text-4xl font-bold text-gray-900 dark:text-white">My Listings</h2>
-      <button class="px-6 py-2 bg-primary text-white rounded-lg font-semibold shadow-md hover:bg-primary/90 transition-colors">
-        Create Listing
-      </button>
-    </div>
-    <div class="bg-background-light dark:bg-background-dark/50 rounded-xl shadow-lg overflow-hidden border border-gray-200 dark:border-gray-700">
-      <div class="overflow-x-auto">
-        <table class="w-full text-left">
-          <thead class="bg-gray-100 dark:bg-gray-800/50">
-            <tr>
-              <th class="p-4 font-semibold text-gray-600 dark:text-gray-300 w-2/5">Item</th>
-              <th class="p-4 font-semibold text-gray-600 dark:text-gray-300 w-1/5">Price</th>
-              <th class="p-4 font-semibold text-gray-600 dark:text-gray-300 w-1/5">Status</th>
-              <th class="p-4 font-semibold text-gray-600 dark:text-gray-300 w-1/5 text-right">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            <!-- Produkt 1 -->
-            <tr class="border-t border-gray-200 dark:border-gray-700">
-              <td class="p-4">
-                <div class="flex items-center gap-4">
-                  <div class="w-12 h-12 rounded-lg bg-cover bg-center" style='background-image: url("https://picsum.photos/60/60?1");'></div>
-                  <span class="font-medium text-gray-900 dark:text-white">Cyberpunk Character</span>
-                </div>
-              </td>
-              <td class="p-4 text-gray-800 dark:text-gray-200">$45.00</td>
-              <td class="p-4">
-                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 dark:bg-green-900/50 text-green-800 dark:text-green-300">
-                  <span class="w-2 h-2 mr-2 bg-green-500 rounded-full"></span>
-                  Active
-                </span>
-              </td>
-              <td class="p-4 text-right">
-                <div id="paypal-button-container-1"></div>
-              </td>
-            </tr>
-            <!-- Produkt 2 -->
-            <tr class="border-t border-gray-200 dark:border-gray-700">
-              <td class="p-4">
-                <div class="flex items-center gap-4">
-                  <div class="w-12 h-12 rounded-lg bg-cover bg-center" style='background-image: url("https://picsum.photos/60/60?2");'></div>
-                  <span class="font-medium text-gray-900 dark:text-white">Sci-Fi Armor Set</span>
-                </div>
-              </td>
-              <td class="p-4 text-gray-800 dark:text-gray-200">$80.00</td>
-              <td class="p-4">
-                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-red-100 dark:bg-red-900/50 text-red-800 dark:text-red-300">
-                  <span class="w-2 h-2 mr-2 bg-red-500 rounded-full"></span>
-                  Inactive
-                </span>
-              </td>
-              <td class="p-4 text-right">
-                <div id="paypal-button-container-2"></div>
-              </td>
-            </tr>
-            <!-- Produkt 3 -->
-            <tr class="border-t border-gray-200 dark:border-gray-700">
-              <td class="p-4">
-                <div class="flex items-center gap-4">
-                  <div class="w-12 h-12 rounded-lg bg-cover bg-center" style='background-image: url("https://picsum.photos/60/60?3");'></div>
-                  <span class="font-medium text-gray-900 dark:text-white">Fantasy Sword</span>
-                </div>
-              </td>
-              <td class="p-4 text-gray-800 dark:text-gray-200">$25.00</td>
-              <td class="p-4">
-                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 dark:bg-green-900/50 text-green-800 dark:text-green-300">
-                  <span class="w-2 h-2 mr-2 bg-green-500 rounded-full"></span>
-                  Active
-                </span>
-              </td>
-              <td class="p-4 text-right">
-                <div id="paypal-button-container-3"></div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </div>
-</main>
+<!-- ================== PAYPAL SDK LADEN ================== -->
+<!-- ⚠️ HIER DEINE CLIENT-ID EINSETZEN -->
+<script src="https://www.paypal.com/sdk/js?client-id=AZLjLoylhP8trchxDw9BolwD2rlIzZVbYyBCbAvgtZ8r2ndbmc49l4RXlBChcNJ9Prx2Jf5_RnsdnEz_&currency=USD"></script>
+<!-- ====================================================== -->
+
+</head>
+<body>
+<div class="app">
+  <!-- dein gesamtes HTML bleibt gleich -->
+  <!-- ... SHOP, CART, WALLET usw. -->
 </div>
 
-<!-- PayPal Buttons Initialisierung -->
 <script>
-  function renderPayPalButton(containerId, price) {
-    paypal.Buttons({
-      createOrder: function(data, actions) {
-        return actions.order.create({
-          purchase_units: [{ amount: { value: price } }]
+/* ---------------- PayPal Buttons ---------------- */
+function renderPayPalButtons(){
+  if(!window.paypal) return console.warn('PayPal SDK nicht geladen');
+  paypal.Buttons({
+    style:{color:'blue',shape:'rect',label:'paypal'},
+    createOrder: function(data, actions){
+      const amt = parseFloat($('#amountInput').value || 0);
+      if(!amt || amt<=0){ alert('Bitte Betrag >0 eingeben'); return Promise.reject(); }
+      return actions.order.create({purchase_units:[{amount:{value:amt.toString()}}]});
+    },
+    onApprove: function(data, actions){
+      return actions.order.capture().then(function(details){
+        const amt = parseFloat($('#amountInput').value || 0);
+        wallet += amt;
+        txs.push({
+          type:'Topup (PayPal)',
+          amount:amt.toFixed(2),
+          time:Date.now(),
+          note:'Payer: '+(details.payer.name?.given_name||'')
         });
-      },
-      onApprove: function(data, actions) {
-        return actions.order.capture().then(function(details) {
-          alert('Danke für deinen Kauf, ' + details.payer.name.given_name + '!');
-          console.log(details);
-        });
-      }
-    }).render(containerId);
-  }
-
-  // Buttons für alle Produkte
-  renderPayPalButton('#paypal-button-container-1', '45.00');
-  renderPayPalButton('#paypal-button-container-2', '80.00');
-  renderPayPalButton('#paypal-button-container-3', '25.00');
+        saveAll(); updateWalletDisplays(); renderHistory();
+        alert('Zahlung erfolgreich! Betrag: $' + amt.toFixed(2));
+      });
+    },
+    onError: function(err){
+      console.error('PayPal Fehler', err);
+      alert('PayPal Fehler: ' + err);
+    }
+  }).render('#paypal-button-container');
+}
 </script>
-
 </body>
 </html>
