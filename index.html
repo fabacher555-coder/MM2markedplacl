@@ -14,25 +14,21 @@
   *{box-sizing:border-box}
   body{margin:0;font-family:Inter,system-ui,Arial;color:#e6eef8;background:linear-gradient(180deg,#0b0e11,#0a0d11 40%);}
   .app{display:flex;height:100vh;overflow:hidden}
-  /* sidebar */
   .sidebar{width:260px;background:#0b0d10;border-right:1px solid rgba(255,255,255,0.02);padding:28px 18px;display:flex;flex-direction:column;gap:18px}
   .brand{display:flex;gap:12px;align-items:center}
   .logo{width:44px;height:44px;border-radius:6px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-weight:800;color:#071028}
   .brand .title{font-weight:700}
   .nav{margin-top:12px;display:flex;flex-direction:column;gap:6px}
   .nav button{background:transparent;color:#cbd6e6;padding:12px 14px;border-radius:8px;text-align:left;border:1px solid transparent;cursor:pointer;display:flex;gap:12px;align-items:center}
-  .nav button.active{background:transparent;border:1px solid rgba(124,92,255,0.16);box-shadow:0 8px 24px rgba(10,8,20,0.6);color:#fff}
-  .nav button svg{opacity:0.7}
-  /* main area */
+  .nav button.active{border:1px solid rgba(124,92,255,0.16);box-shadow:0 8px 24px rgba(10,8,20,0.6);color:#fff}
   .main{flex:1;padding:34px;overflow:auto}
   .page-title{font-size:34px;margin:0 0 16px}
   .content-card{background:var(--panel);border-radius:12px;padding:18px;border:1px solid rgba(255,255,255,0.02);box-shadow:0 4px 18px rgba(2,6,20,0.4)}
-  /* shop grid */
   .controls{display:flex;gap:12px;align-items:center;margin-bottom:18px}
   .search{flex:1;padding:12px;border-radius:8px;background:#0c0f12;border:1px solid rgba(255,255,255,0.02);color:#cfe4ff}
   .filter, .walletbox{padding:10px 12px;border-radius:10px;background:#0c0f12;border:1px solid rgba(124,92,255,0.08);color:var(--muted)}
   .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px;margin-top:18px}
-  .card{background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(0,0,0,0.02));border-radius:12px;padding:16px;border:1px solid rgba(255,255,255,0.02)}
+  .card{background:var(--card-bg);border-radius:12px;padding:16px;border:1px solid rgba(255,255,255,0.02)}
   .card img{width:100%;height:160px;object-fit:contain;border-radius:8px;margin-bottom:8px}
   .title{font-weight:700}
   .muted{color:var(--muted);font-size:13px}
@@ -40,72 +36,143 @@
   .card .actions{display:flex;gap:8px;margin-top:10px}
   .btn{padding:10px 12px;border-radius:8px;border:0;background:linear-gradient(90deg,var(--accent),var(--accent2));color:#021;cursor:pointer}
   .btn.secondary{background:transparent;border:1px solid rgba(255,255,255,0.04);color:var(--muted)}
-  /* wallet page */
   .wallet-grid{display:grid;grid-template-columns:1fr;gap:16px}
   .wallet-top{display:flex;justify-content:space-between;gap:12px;align-items:center}
-  .top-box{padding:20px;border-radius:12px;border:1px solid rgba(255,255,255,0.02);background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(0,0,0,0.02))}
+  .top-box{padding:20px;border-radius:12px;border:1px solid rgba(255,255,255,0.02);background:var(--card-bg)}
   .stat-big{font-size:28px;font-weight:800;color:#fff}
   .topup-amount{width:220px;padding:12px;border-radius:8px;background:#0b0d11;border:1px solid rgba(255,255,255,0.02);color:#cfe4ff}
   .preset-row{display:flex;gap:12px;margin-top:10px}
   .preset{flex:1;padding:12px;border-radius:10px;background:#0b0d11;border:1px solid rgba(255,255,255,0.02);text-align:center;cursor:pointer}
   .pay-options{display:flex;gap:12px;margin-top:14px}
   .pay-btn{flex:1;padding:14px;border-radius:10px;background:#0c0f12;border:1px solid rgba(255,255,255,0.02);cursor:pointer;text-align:center}
-  .note{background:#2b2a24;padding:10px;border-radius:8px;color:#f9f0c9;margin-top:14px}
-  /* profile cards */
-  .profile-row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-  .profile-stat{padding:18px;border-radius:10px;border:1px solid rgba(2,200,120,0.12)}
-  .muted-small{color:var(--muted);font-size:13px}
-  /* responsive */
-  @media(max-width:900px){
-    .sidebar{display:none}
-    .profile-row{grid-template-columns:1fr}
-    .grid{grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
-  }
+  @media(max-width:900px){.sidebar{display:none}.grid{grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}}
 </style>
 
-<!-- ================== PAYPAL SDK LADEN ================== -->
-<!-- ⚠️ HIER DEINE CLIENT-ID EINSETZEN -->
+<!-- 🚨 HIER DEINE CLIENT-ID einsetzen -->
 <script src="https://www.paypal.com/sdk/js?client-id=AZLjLoylhP8trchxDw9BolwD2rlIzZVbYyBCbAvgtZ8r2ndbmc49l4RXlBChcNJ9Prx2Jf5_RnsdnEz_&currency=USD"></script>
-<!-- ====================================================== -->
 
 </head>
 <body>
 <div class="app">
-  <!-- dein gesamtes HTML bleibt gleich -->
-  <!-- ... SHOP, CART, WALLET usw. -->
+  <aside class="sidebar">
+    <div class="brand"><div class="logo">MM2</div><div><div class="title">MM2 Market</div><div style="font-size:12px;color:var(--muted)">Trading Hub</div></div></div>
+    <nav class="nav">
+      <button data-page="shop" class="active">🏠 Shop</button>
+      <button data-page="cart">🧺 Warenkorb</button>
+      <button data-page="wallet">💳 Wallet</button>
+    </nav>
+  </aside>
+
+  <main class="main">
+    <!-- SHOP -->
+    <section id="page-shop" class="page">
+      <h1 class="page-title">Shop</h1>
+      <div class="content-card">
+        <div class="controls">
+          <input id="searchInput" class="search" placeholder="Item suchen..." />
+          <div class="walletbox">Guthaben: <strong id="walletDisplay">$0.00</strong></div>
+        </div>
+        <div id="shopGrid" class="grid"></div>
+      </div>
+    </section>
+
+    <!-- CART -->
+    <section id="page-cart" class="page" style="display:none">
+      <h1 class="page-title">Warenkorb</h1>
+      <div class="content-card" id="cartCard">
+        <div id="cartContent">Dein Warenkorb ist leer</div>
+      </div>
+    </section>
+
+    <!-- WALLET -->
+    <section id="page-wallet" class="page" style="display:none">
+      <h1 class="page-title">Wallet</h1>
+      <div class="wallet-grid">
+        <div class="top-box">
+          <div>
+            <div>Aktuelles Guthaben</div>
+            <div class="stat-big" id="walletBig">$0.00</div>
+          </div>
+        </div>
+        <div class="content-card">
+          <h3>Guthaben aufladen</h3>
+          <input id="amountInput" class="topup-amount" type="number" min="1" step="1" placeholder="Betrag ($)" />
+          <div class="preset-row">
+            <div class="preset" onclick="setAmount(10)">$10</div>
+            <div class="preset" onclick="setAmount(25)">$25</div>
+            <div class="preset" onclick="setAmount(50)">$50</div>
+          </div>
+          <div class="pay-options">
+            <div id="paypal-button-container" style="width:100%"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
 </div>
 
 <script>
-/* ---------------- PayPal Buttons ---------------- */
-function renderPayPalButtons(){
-  if(!window.paypal) return console.warn('PayPal SDK nicht geladen');
+const STORAGE = {ITEMS:'items',CART:'cart',WALLET:'wallet'};
+let items=[{id:'sunset',name:'Sunset',price:150,image:'https://via.placeholder.com/300x160?text=Sunset'}];
+let cart=JSON.parse(localStorage.getItem(STORAGE.CART))||[];
+let wallet=parseFloat(localStorage.getItem(STORAGE.WALLET)||0);
+
+function save(){localStorage.setItem(STORAGE.CART,JSON.stringify(cart));localStorage.setItem(STORAGE.WALLET,wallet.toFixed(2));}
+function $(s){return document.querySelector(s);}
+function $all(s){return document.querySelectorAll(s);}
+
+function renderShop(){
+  const g=$('#shopGrid');g.innerHTML='';
+  items.forEach(it=>{
+    const d=document.createElement('div');d.className='card';
+    d.innerHTML=`<img src="${it.image}"><div class="title">${it.name}</div><div class="price">$${it.price}</div>
+    <div class="actions"><button class="btn" onclick='addToCart("${it.id}")'>🛒 Kaufen</button></div>`;
+    g.appendChild(d);
+  });
+  updateWallet();
+}
+function addToCart(id){const it=items.find(x=>x.id===id);if(it){cart.push(it);save();renderCart();}}
+function renderCart(){
+  const el=$('#cartContent');
+  if(cart.length===0){el.innerHTML='Dein Warenkorb ist leer';return;}
+  let sum=0;let html='<ul>';
+  cart.forEach((c,i)=>{sum+=c.price;html+=`<li>${c.name} — $${c.price}<button class="btn secondary" onclick="removeFromCart(${i})">x</button></li>`});
+  html+=`</ul><div><strong>Summe: $${sum}</strong></div><button class="btn" onclick="checkout()">Mit Wallet kaufen</button>`;
+  el.innerHTML=html;
+}
+function removeFromCart(i){cart.splice(i,1);save();renderCart();}
+function checkout(){
+  const total=cart.reduce((s,i)=>s+i.price,0);
+  if(wallet<total){alert('Nicht genug Guthaben! Lade zuerst mit PayPal auf.');return;}
+  wallet-=total;cart=[];save();renderCart();updateWallet();alert('Kauf erfolgreich!');
+}
+function updateWallet(){$('#walletDisplay').textContent=`$${wallet.toFixed(2)}`;$('#walletBig').textContent=`$${wallet.toFixed(2)}`;}
+
+// Wallet Betrag setzen
+function setAmount(v){$('#amountInput').value=v;}
+
+// PayPal Buttons
+function renderPayPal(){
+  if(!window.paypal) return;
   paypal.Buttons({
-    style:{color:'blue',shape:'rect',label:'paypal'},
-    createOrder: function(data, actions){
-      const amt = parseFloat($('#amountInput').value || 0);
-      if(!amt || amt<=0){ alert('Bitte Betrag >0 eingeben'); return Promise.reject(); }
+    createOrder:(data,actions)=>{
+      const amt=parseFloat($('#amountInput').value||0);
+      if(!amt||amt<=0){alert('Bitte Betrag eingeben');return Promise.reject();}
       return actions.order.create({purchase_units:[{amount:{value:amt.toString()}}]});
     },
-    onApprove: function(data, actions){
-      return actions.order.capture().then(function(details){
-        const amt = parseFloat($('#amountInput').value || 0);
-        wallet += amt;
-        txs.push({
-          type:'Topup (PayPal)',
-          amount:amt.toFixed(2),
-          time:Date.now(),
-          note:'Payer: '+(details.payer.name?.given_name||'')
-        });
-        saveAll(); updateWalletDisplays(); renderHistory();
-        alert('Zahlung erfolgreich! Betrag: $' + amt.toFixed(2));
+    onApprove:(data,actions)=>{
+      return actions.order.capture().then(function(){
+        const amt=parseFloat($('#amountInput').value||0);
+        wallet+=amt;save();updateWallet();alert('Wallet aufgeladen: $'+amt);
       });
-    },
-    onError: function(err){
-      console.error('PayPal Fehler', err);
-      alert('PayPal Fehler: ' + err);
     }
   }).render('#paypal-button-container');
 }
+
+// Navigation
+$all('.nav button').forEach(b=>b.addEventListener('click',()=>switchPage(b.getAttribute('data-page'))));
+function switchPage(p){$all('.page').forEach(x=>x.style.display='none');$('#page-'+p).style.display='block';$all('.nav button').forEach(x=>x.classList.remove('active'));document.querySelector(`[data-page="${p}"]`).classList.add('active');if(p==='shop')renderShop();if(p==='cart')renderCart();if(p==='wallet')renderPayPal();}
+renderShop();renderCart();updateWallet();
 </script>
 </body>
 </html>
