@@ -27,30 +27,52 @@
     top: 0;
     width: 220px;
     height: 100%;
-    background: #1f1f2e;
+    background: #1a1a28;
     display: flex;
     flex-direction: column;
-    padding: 1.5rem 1rem;
-    gap: 1.5rem;
+    padding: 1.5rem;
+    gap: 1rem;
     border-right: 1px solid #4e2ddb33;
+    color: #ccc;
   }
-  .sidebar h2 {
-    font-size: 1.5rem;
-    background: linear-gradient(90deg, #9d4edd, #00bcd4);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-  }
-  .sidebar a {
-    padding: 0.75rem 1rem;
-    border-radius: 0.75rem;
+  .sidebar-header .logo {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
-    transition: 0.3s;
-    font-weight: 500;
+    gap: 0.75rem;
+    margin-bottom: 2rem;
   }
-  .sidebar a:hover, .sidebar a.active {
+  .logo-text .name {
+    font-weight: bold;
+    color: #fff;
+  }
+  .logo-text .subtitle {
+    font-size: 0.75rem;
+    color: #9d9dff;
+  }
+  .nav-title {
+    font-size: 0.7rem;
+    color: #9d4edd;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+  }
+  .sidebar a {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: 0.2s;
+    color: #ccc;
+  }
+  .sidebar a:hover {
     background: #4e2ddb55;
+    color: #fff;
+  }
+  .sidebar a.active {
+    background: #4e2ddb88;
+    color: #fff;
+    font-weight: bold;
   }
 
   /* Main Content */
@@ -212,12 +234,32 @@
 </style>
 </head>
 <body>
+
 <div class="sidebar">
-  <h2>GameTrade</h2>
-  <a class="active" onclick="showSection('marketplace')">Marktplatz</a>
-  <a onclick="showSection('inventory')">Mein Inventar</a>
-  <a onclick="showSection('create')">Item verkaufen</a>
-  <a onclick="showSection('transactions')">Meine Chats</a>
+  <div class="sidebar-header">
+    <div class="logo">
+      <span style="font-size:1.5rem;">🏬</span>
+      <div class="logo-text">
+        <div class="name">GameTrade</div>
+        <div class="subtitle">Item Marketplace</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="nav-title">NAVIGATION</div>
+  
+  <a class="active" onclick="showSection('marketplace')">
+    <span>🏪</span> Marktplatz
+  </a>
+  <a onclick="showSection('inventory')">
+    <span>📦</span> Mein Inventar
+  </a>
+  <a onclick="showSection('create')">
+    <span>➕</span> Item verkaufen
+  </a>
+  <a onclick="showSection('transactions')">
+    <span>💬</span> Meine Chats
+  </a>
 </div>
 
 <div class="main">
