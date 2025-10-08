@@ -1,220 +1,297 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="de">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>MM2 Market — Login System</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
-  <style>
-    :root{
-      --bg:#0f1114; --panel:#121418; --muted:#9aa6b6;
-      --accent:#7c5cff; --accent2:#8a34b3; --neon:#02d07b;
-      --card-bg:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.00));
-    }
-    *{box-sizing:border-box}
-    body{
-      margin:0;font-family:Inter,system-ui,Arial;
-      color:#e6eef8;background:linear-gradient(180deg,#0b0e11,#0a0d11 40%);
-    }
-    .app{display:flex;height:100vh;overflow:hidden}
-    .sidebar{
-      width:260px;background:#0b0d10;
-      border-right:1px solid rgba(255,255,255,0.02);
-      padding:28px 18px;display:flex;flex-direction:column;gap:18px
-    }
-    .brand{display:flex;gap:12px;align-items:center}
-    .logo{
-      width:44px;height:44px;border-radius:6px;
-      background:linear-gradient(135deg,var(--accent),var(--accent2));
-      display:flex;align-items:center;justify-content:center;
-      font-weight:800;color:#071028
-    }
-    .brand .title{font-weight:700}
-    .nav{margin-top:12px;display:flex;flex-direction:column;gap:6px}
-    .nav button{
-      background:transparent;color:#cbd6e6;padding:12px 14px;
-      border-radius:8px;text-align:left;border:1px solid transparent;
-      cursor:pointer;display:flex;gap:12px;align-items:center
-    }
-    .nav button.active{
-      border:1px solid rgba(124,92,255,0.16);
-      box-shadow:0 8px 24px rgba(10,8,20,0.6);color:#fff
-    }
-    .main{flex:1;padding:34px;overflow:auto;position:relative}
-    .page-title{font-size:34px;margin:0 0 16px}
-    .content-card{
-      background:var(--panel);border-radius:12px;padding:18px;
-      border:1px solid rgba(255,255,255,0.02);
-      box-shadow:0 4px 18px rgba(2,6,20,0.4)
-    }
-    .topbar{
-      position:absolute;top:20px;right:30px;
-      display:flex;align-items:center;gap:16px;
-    }
-    .profile-btn{
-      background:linear-gradient(90deg,var(--accent),var(--accent2));
-      border:none;border-radius:8px;padding:10px 14px;
-      color:white;font-weight:600;cursor:pointer;
-    }
-    .popup{
-      position:fixed;top:0;left:0;width:100%;height:100%;
-      background:rgba(0,0,0,0.7);display:flex;justify-content:center;
-      align-items:center;z-index:1000;display:none;
-    }
-    .popup-content{
-      background:#14171c;border-radius:12px;padding:28px;width:320px;
-      display:flex;flex-direction:column;gap:10px;
-      border:1px solid rgba(255,255,255,0.05);
-    }
-    .popup-content input{
-      padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.1);
-      background:#0d0f12;color:#fff
-    }
-    .popup-content button{
-      padding:10px;border-radius:8px;border:0;
-      background:linear-gradient(90deg,var(--accent),var(--accent2));
-      color:#fff;font-weight:600;cursor:pointer;
-    }
-    .switchlink{
-      text-align:center;font-size:13px;color:var(--muted);cursor:pointer;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GameTrade Marketplace</title>
+<style>
+  body {
+    margin: 0;
+    font-family: 'Inter', sans-serif;
+    background: linear-gradient(to bottom right, #0f0c29, #302b63, #24243e);
+    color: white;
+  }
+  h1, h2, h3 {
+    margin: 0;
+  }
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+  .container {
+    max-width: 1200px;
+    margin: auto;
+    padding: 2rem;
+  }
+  .header {
+    margin-bottom: 2rem;
+  }
+  .gradient-text {
+    background: linear-gradient(to right, #9d4edd, #00bcd4);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .tabs {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+  }
+  .tab {
+    padding: 0.5rem 1rem;
+    background: rgba(55, 48, 163, 0.5);
+    border-radius: 0.5rem;
+    cursor: pointer;
+  }
+  .tab.active {
+    background: #9d4edd;
+  }
+  .search-box {
+    position: relative;
+    margin-bottom: 1rem;
+  }
+  .search-box input {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    padding-left: 2.5rem;
+    border-radius: 0.75rem;
+    border: 1px solid rgba(155, 81, 224,0.3);
+    background: rgba(31, 41, 55, 0.7);
+    color: white;
+  }
+  .search-box svg {
+    position: absolute;
+    left: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    fill: #9d4edd;
+    width: 1rem;
+    height: 1rem;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill,minmax(280px,1fr));
+    gap: 1rem;
+  }
+  .card {
+    background: rgba(31, 41, 55, 0.5);
+    border: 1px solid rgba(155, 81, 224, 0.3);
+    border-radius: 1rem;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+  .card img {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+  }
+  .card-header {
+    position: relative;
+  }
+  .badge {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.5rem;
+    font-size: 0.75rem;
+    font-weight: bold;
+  }
+  .card-content {
+    padding: 1rem;
+    flex: 1;
+  }
+  .card-title {
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+  }
+  .price {
+    font-size: 1.25rem;
+    font-weight: bold;
+    margin-top: 0.5rem;
+    color: #00bcd4;
+  }
+  .payment-badges {
+    display: flex;
+    gap: 0.25rem;
+    margin-top: 0.5rem;
+    flex-wrap: wrap;
+  }
+  .payment-badges span {
+    border: 1px solid rgba(155, 81, 224,0.3);
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.5rem;
+    font-size: 0.75rem;
+  }
+  .btn {
+    margin-top: auto;
+    padding: 0.75rem;
+    border: none;
+    border-radius: 0.75rem;
+    cursor: pointer;
+    font-weight: bold;
+    background: linear-gradient(to right, #9d4edd, #00bcd4);
+    color: white;
+  }
+  .sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 220px;
+    height: 100%;
+    background: rgba(31, 41, 55,0.5);
+    border-right: 1px solid rgba(155, 81, 224,0.3);
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  .sidebar a {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+  }
+  .sidebar a:hover {
+    background: rgba(155, 81, 224,0.5);
+  }
+  .main {
+    margin-left: 240px;
+    padding: 2rem;
+  }
+</style>
 </head>
 <body>
-<div class="app">
-  <aside class="sidebar">
-    <div class="brand">
-      <div class="logo">MM2</div>
-      <div><div class="title">MM2 Market</div><div style="font-size:12px;color:var(--muted)">Trading Hub</div></div>
-    </div>
-    <nav class="nav">
-      <button data-page="shop" class="active">🏠 Shop</button>
-      <button data-page="wallet">💳 Wallet</button>
-      <button data-page="inventori">🎒 Inventori</button>
-    </nav>
-  </aside>
+<div class="sidebar">
+  <h2 class="gradient-text">GameTrade</h2>
+  <a href="#marketplace">Marktplatz</a>
+  <a href="#inventory">Mein Inventar</a>
+  <a href="#create">Item verkaufen</a>
+  <a href="#transactions">Meine Chats</a>
+</div>
 
-  <main class="main">
-    <div class="topbar">
-      <div id="userInfo">Nicht angemeldet</div>
-      <button class="profile-btn" id="profileBtn">👤 Profil</button>
-    </div>
-
-    <section id="page-shop" class="page">
-      <h1 class="page-title">Shop</h1>
-      <div class="content-card">
-        Willkommen im MM2 Market!
+<div class="main">
+  <section id="marketplace">
+    <div class="container">
+      <div class="header">
+        <h1 class="gradient-text">Gaming Items Marktplatz</h1>
+        <p>Finde die besten Deals für deine Lieblingsspiele</p>
       </div>
-    </section>
+      <div class="search-box">
+        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2" fill="none"/><line x1="21" y1="21" x2="16.65" y2="16.65" stroke="currentColor" stroke-width="2"/></svg>
+        <input type="text" placeholder="Suche nach Items..." />
+      </div>
+      <div class="tabs">
+        <div class="tab active">Alle</div>
+        <div class="tab">MM2</div>
+        <div class="tab">Adopt Me</div>
+        <div class="tab">Grow a Garden</div>
+        <div class="tab">Steal a Brainrot</div>
+      </div>
+      <div class="grid">
+        <div class="card">
+          <div class="card-header">
+            <img src="https://via.placeholder.com/280x180" alt="Item">
+            <div class="badge">MM2</div>
+          </div>
+          <div class="card-content">
+            <div class="card-title">Legendäres Schwert</div>
+            <p class="price">€99.99</p>
+            <div class="payment-badges">
+              <span>PayPal</span>
+              <span>Crypto</span>
+            </div>
+            <button class="btn">Jetzt kaufen</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header">
+            <img src="https://via.placeholder.com/280x180" alt="Item">
+            <div class="badge">Adopt Me</div>
+          </div>
+          <div class="card-content">
+            <div class="card-title">Seltene Katze</div>
+            <p class="price">€50.00</p>
+            <div class="payment-badges">
+              <span>PayPal</span>
+              <span>Banküberweisung</span>
+            </div>
+            <button class="btn">Jetzt kaufen</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
 
-    <section id="page-wallet" class="page" style="display:none">
-      <h1 class="page-title">Wallet</h1>
-      <div class="content-card">Hier kannst du dein Guthaben verwalten.</div>
-    </section>
+  <section id="inventory" style="margin-top:4rem;">
+    <div class="container">
+      <div class="header">
+        <h1 class="gradient-text">Mein Inventar</h1>
+        <p>Verwalte deine zum Verkauf stehenden Items</p>
+      </div>
+      <div class="grid">
+        <div class="card">
+          <div class="card-header">
+            <img src="https://via.placeholder.com/280x180" alt="Item">
+            <div class="badge">Grow a Garden</div>
+          </div>
+          <div class="card-content">
+            <div class="card-title">Magischer Baum</div>
+            <p class="price">€20.00</p>
+            <div class="payment-badges">
+              <span>Crypto</span>
+              <span>Banküberweisung</span>
+            </div>
+            <button class="btn">Bearbeiten</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
 
-    <section id="page-inventori" class="page" style="display:none">
-      <h1 class="page-title">Inventar</h1>
-      <div class="content-card">Deine Items erscheinen hier.</div>
-    </section>
-  </main>
+  <section id="create" style="margin-top:4rem;">
+    <div class="container">
+      <div class="header">
+        <h1 class="gradient-text">Item verkaufen</h1>
+        <p>Erstelle ein neues Verkaufsangebot</p>
+      </div>
+      <form class="grid gap-4">
+        <input type="text" placeholder="Spiel" />
+        <input type="text" placeholder="Item Name" />
+        <textarea placeholder="Beschreibung"></textarea>
+        <input type="number" placeholder="Preis (EUR)" />
+        <input type="text" placeholder="Zahlungsmethoden (Komma getrennt)" />
+        <input type="text" placeholder="Zeitzone" />
+        <button class="btn">Listing erstellen</button>
+      </form>
+    </div>
+  </section>
+
+  <section id="transactions" style="margin-top:4rem;">
+    <div class="container">
+      <div class="header">
+        <h1 class="gradient-text">Meine Transaktionen</h1>
+        <p>Verwalte deine Käufe und Verkäufe</p>
+      </div>
+      <div class="grid">
+        <div class="card">
+          <div class="card-header">
+            <img src="https://via.placeholder.com/280x180" alt="Item">
+            <div class="badge">MM2</div>
+          </div>
+          <div class="card-content">
+            <div class="card-title">Legendäres Schwert</div>
+            <p class="price">€99.99</p>
+            <div class="payment-badges">
+              <span>PayPal</span>
+            </div>
+            <button class="btn">Chat öffnen</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
 </div>
-
-<!-- Login/Register Popup -->
-<div id="popup" class="popup">
-  <div class="popup-content" id="loginForm">
-    <h2>Anmelden</h2>
-    <input type="email" id="loginEmail" placeholder="E-Mail" />
-    <input type="password" id="loginPass" placeholder="Passwort" />
-    <button onclick="login()">Login</button>
-    <div class="switchlink" onclick="switchForm('register')">Kein Konto? Registrieren</div>
-  </div>
-
-  <div class="popup-content" id="registerForm" style="display:none">
-    <h2>Registrieren</h2>
-    <input type="email" id="regEmail" placeholder="E-Mail" />
-    <input type="password" id="regPass" placeholder="Passwort" />
-    <button onclick="register()">Registrieren</button>
-    <div class="switchlink" onclick="switchForm('login')">Schon ein Konto? Anmelden</div>
-  </div>
-</div>
-
-<script>
-const STORAGE = {USER:'user'};
-let currentUser = JSON.parse(localStorage.getItem(STORAGE.USER)) || null;
-
-function updateUserInfo(){
-  const info=document.getElementById('userInfo');
-  if(currentUser){
-    info.textContent = currentUser.email;
-  }else{
-    info.textContent = 'Nicht angemeldet';
-  }
-}
-
-function openPopup(){
-  document.getElementById('popup').style.display='flex';
-  switchForm(currentUser ? 'login' : 'login');
-}
-function closePopup(){
-  document.getElementById('popup').style.display='none';
-}
-
-document.getElementById('profileBtn').addEventListener('click', ()=>{
-  if(currentUser){
-    if(confirm("Möchtest du dich abmelden?")){logout();}
-  }else{
-    openPopup();
-  }
-});
-
-function switchForm(form){
-  document.getElementById('loginForm').style.display = (form==='login')?'flex':'none';
-  document.getElementById('registerForm').style.display = (form==='register')?'flex':'none';
-}
-
-function register(){
-  const email=document.getElementById('regEmail').value.trim();
-  const pass=document.getElementById('regPass').value.trim();
-  if(!email||!pass){alert('Bitte alle Felder ausfüllen.');return;}
-  const user={email,password:pass};
-  localStorage.setItem('user_'+email, JSON.stringify(user));
-  alert('Registrierung erfolgreich! Bitte anmelden.');
-  switchForm('login');
-}
-
-function login(){
-  const email=document.getElementById('loginEmail').value.trim();
-  const pass=document.getElementById('loginPass').value.trim();
-  const stored=localStorage.getItem('user_'+email);
-  if(!stored){alert('Benutzer nicht gefunden.');return;}
-  const user=JSON.parse(stored);
-  if(user.password!==pass){alert('Falsches Passwort.');return;}
-  currentUser=user;
-  localStorage.setItem(STORAGE.USER, JSON.stringify(user));
-  closePopup();updateUserInfo();alert('Erfolgreich angemeldet!');
-}
-
-function logout(){
-  localStorage.removeItem(STORAGE.USER);
-  currentUser=null;
-  updateUserInfo();
-  alert('Abgemeldet.');
-}
-
-updateUserInfo();
-
-document.getElementById('popup').addEventListener('click', e=>{
-  if(e.target.id==='popup'){closePopup();}
-});
-
-document.querySelectorAll('.nav button').forEach(btn=>{
-  btn.addEventListener('click', ()=>{
-    document.querySelectorAll('.page').forEach(p=>p.style.display='none');
-    document.getElementById('page-'+btn.dataset.page).style.display='block';
-    document.querySelectorAll('.nav button').forEach(b=>b.classList.remove('active'));
-    btn.classList.add('active');
-  });
-});
-</script>
 </body>
 </html>
