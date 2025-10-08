@@ -97,6 +97,7 @@
     display: grid;
     grid-template-columns: repeat(auto-fill,minmax(280px,1fr));
     gap: 1.5rem;
+    justify-items: center; /* Zentriert alle Cards */
   }
 
   /* Karten */
@@ -106,8 +107,10 @@
     overflow: hidden;
     display: flex;
     flex-direction: column;
+    align-items: center;
     box-shadow: 0 4px 15px rgba(0,0,0,0.3);
     transition: transform 0.3s, box-shadow 0.3s;
+    text-align: center; /* Text zentriert */
   }
   .card:hover {
     transform: translateY(-5px);
@@ -120,11 +123,16 @@
   }
   .card-header {
     position: relative;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
   .badge {
     position: absolute;
-    top: 0.5rem;
-    right: 0.5rem;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
     background: #9d4edd;
     padding: 0.3rem 0.6rem;
     font-size: 0.75rem;
@@ -136,6 +144,7 @@
     flex: 1;
     display: flex;
     flex-direction: column;
+    align-items: center;
   }
   .card-title {
     font-weight: 700;
@@ -145,7 +154,7 @@
   .price {
     font-size: 1.2rem;
     font-weight: bold;
-    margin-top: auto;
+    margin-top: 0.5rem;
     color: #00bcd4;
   }
   .payment-badges {
@@ -270,12 +279,24 @@
       <div class="card">
         <div class="card-header">
           <img src="https://via.placeholder.com/280x180" alt="Item">
-          <div class="badge">MM2</div>
+          <div class="badge">Schwert</div>
         </div>
         <div class="card-content">
           <div class="card-title">Legendäres Schwert</div>
           <p class="price">€99.99</p>
           <div class="payment-badges"><span>PayPal</span><span>Crypto</span></div>
+          <button class="btn">Jetzt kaufen</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <img src="https://via.placeholder.com/280x180" alt="Item">
+          <div class="badge">Schwert</div>
+        </div>
+        <div class="card-content">
+          <div class="card-title">Mächtiges Schwert</div>
+          <p class="price">€79.99</p>
+          <div class="payment-badges"><span>PayPal</span><span>Banküberweisung</span></div>
           <button class="btn">Jetzt kaufen</button>
         </div>
       </div>
@@ -289,7 +310,7 @@
       <div class="card">
         <div class="card-header">
           <img src="https://via.placeholder.com/280x180" alt="Item">
-          <div class="badge">Grow a Garden</div>
+          <div class="badge">Schwert</div>
         </div>
         <div class="card-content">
           <div class="card-title">Magischer Baum</div>
@@ -304,7 +325,7 @@
   <!-- Create Listing -->
   <section id="create">
     <h1>Item verkaufen</h1>
-    <form class="grid gap-4">
+    <form class="grid gap-4" style="justify-items:center;">
       <input type="text" placeholder="Spiel" />
       <input type="text" placeholder="Item Name" />
       <textarea placeholder="Beschreibung"></textarea>
